@@ -6,6 +6,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour, KinematicCharacterController.ICharacterController {
 
+    public static Player Instance { get; private set; }
     [SerializeField] private float playerSpeed;
     [SerializeField] private Vector3 gravityVector;
     [SerializeField] private KinematicCharacterMotor Motor;
@@ -14,6 +15,11 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     //Rotation
     private Vector3 pointerPositionOnPlayerPlane;
     private Quaternion playerRotation;
+
+
+    private void Awake() {
+        Instance = this;
+    }
 
     // Start is called before the first frame update
     void Start() {
@@ -94,9 +100,10 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         //Gravity
         currentVelocity += gravityVector * deltaTime;
     }
-    #endregion
-    private void OnDrawGizmos() {
-        Gizmos.color = Color.red;
-        Gizmos.DrawSphere(pointerPositionOnPlayerPlane, 1f);
+
+    public Vector3 GetPlayerMovementVector() {
+        return movementVector;
     }
+    #endregion
+
 }
