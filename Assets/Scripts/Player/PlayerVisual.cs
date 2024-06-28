@@ -20,11 +20,11 @@ public class PlayerVisual : MonoBehaviour {
     }
 
     private void SetMovement() {
-        if (player.GetPlayerMovementVector().z > 0) {
+        if (player.GetPlayerMovementVectorRelativeToPointer().z > 0) {
             animator.SetBool(MOVE_FORWARD_BOOL, true);
             animator.SetBool(MOVE_BACKWARD_BOOL, false);
         }
-        else if (player.GetPlayerMovementVector().z < 0) {
+        else if (player.GetPlayerMovementVectorRelativeToPointer().z < 0) {
             animator.SetBool(MOVE_FORWARD_BOOL, false);
             animator.SetBool(MOVE_BACKWARD_BOOL, true);
         }

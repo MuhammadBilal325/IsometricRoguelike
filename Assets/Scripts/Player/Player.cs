@@ -3,6 +3,7 @@ using KinematicCharacterController;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Player : MonoBehaviour, KinematicCharacterController.ICharacterController {
 
@@ -11,6 +12,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     [SerializeField] private Vector3 gravityVector;
     [SerializeField] private KinematicCharacterMotor Motor;
     private Vector3 movementVector;
+    private Vector3 vectorToPointer;
 
     //Rotation
     private Vector3 pointerPositionOnPlayerPlane;
@@ -34,7 +36,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     void ReorientMovementVectorToCamera() {
-        movementVector = GameInput.Instance.GetNormalizedMovementVector();
+        Vector3 inputVector = GameInput.Instance.GetMovementVector();
+        movementVector = inputVector.normalized;
         movementVector = new Vector3(movementVector.x, 0, movementVector.y);
         // Get the camera's forward and right vectors
         Vector3 forward = Camera.main.transform.forward;
@@ -46,6 +49,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         right.Normalize();
         // Reorient the movement vector to the camera
         movementVector = (forward * movementVector.z + right * movementVector.x);
+        vectorToPointer = (pointerPositionOnPlayerPlane - transform.position).normalized;
+        vectorToPointer = new Vector3(vectorToPointer.x * inputVector.x, vectorToPointer.y, vectorToPointer.z * inputVector.y);
     }
 
     void ReorientPlayerRotationToPointer() {
@@ -101,8 +106,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         currentVelocity += gravityVector * deltaTime;
     }
 
-    public Vector3 GetPlayerMovementVector() {
-        return movementVector;
+    public Vector3 GetPlayerMovementVectorRelativeToPointer() {
+        return vectorToPointer;
     }
     #endregion
 
