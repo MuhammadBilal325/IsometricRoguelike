@@ -2,17 +2,22 @@ using Cinemachine.Utility;
 using KinematicCharacterController;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 
 public class Player : MonoBehaviour, KinematicCharacterController.ICharacterController {
 
     public static Player Instance { get; private set; }
+
+    [SerializeField] private Transform attackSpawnPoint;
+    [SerializeField] private AttackListSO attackListSO;
+    //Movement
     [SerializeField] private float playerSpeed;
     [SerializeField] private Vector3 gravityVector;
     [SerializeField] private KinematicCharacterMotor Motor;
     private Vector3 movementVector;
-    private Vector3 vectorToPointer;
+    private float playerToPointerAngle = 0f;
 
     //Rotation
     private Vector3 pointerPositionOnPlayerPlane;
@@ -25,14 +30,28 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
     // Start is called before the first frame update
     void Start() {
-
+        GameInput.Instance.Attack1Pressed += GameInput_Attack1Pressed;
         Motor.CharacterController = this;
     }
+    #region Inputs
+    private void GameInput_Attack1Pressed(object sender, System.EventArgs e) {
+        Attack1();
+    }
+    #endregion
+
+    #region Attacks
+
+    private void Attack1() {
+        Instantiate(attackListSO.attackList[0].attackPrefab, attackSpawnPoint.transform.position, attackSpawnPoint.rotation);
+    }
+
+    #endregion
+
 
     // Update is called once per frame
     void Update() {
-        ReorientMovementVectorToCamera();
         ReorientPlayerRotationToPointer();
+        ReorientMovementVectorToCamera();
     }
 
     void ReorientMovementVectorToCamera() {
@@ -49,8 +68,9 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         right.Normalize();
         // Reorient the movement vector to the camera
         movementVector = (forward * movementVector.z + right * movementVector.x);
-        vectorToPointer = (pointerPositionOnPlayerPlane - transform.position).normalized;
-        vectorToPointer = new Vector3(vectorToPointer.x * inputVector.x, vectorToPointer.y, vectorToPointer.z * inputVector.y);
+        //Get angle between movement vector and the vector that points to the pointer
+        Vector3 vectorToPointer = (pointerPositionOnPlayerPlane - transform.position).normalized;
+        playerToPointerAngle = Vector3.SignedAngle(movementVector, vectorToPointer, Vector3.up);
     }
 
     void ReorientPlayerRotationToPointer() {
@@ -73,6 +93,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     public bool IsColliderValidForCollisions(Collider coll) {
+        if (coll.CompareTag(Tags.PLAYER_ATTACK_TAG))
+            return false;
         return true;
     }
 
@@ -107,7 +129,21 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     public Vector3 GetPlayerMovementVectorRelativeToPointer() {
-        return vectorToPointer;
+        if (movementVector == Vector3.zero) {
+            return Vector3.zero;
+        }
+        else if (playerToPointerAngle > -45 && playerToPointerAngle < 45) {
+            return Vector3.forward;
+        }
+        else if (playerToPointerAngle >= 45 && playerToPointerAngle < 135) {
+            return Vector3.right;
+        }
+        else if (playerToPointerAngle <= -45 && playerToPointerAngle > -135) {
+            return Vector3.left;
+        }
+        else {
+            return Vector3.back;
+        }
     }
     #endregion
 

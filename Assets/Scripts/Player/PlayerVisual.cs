@@ -4,10 +4,13 @@ using UnityEngine;
 
 public class PlayerVisual : MonoBehaviour {
 
+    [SerializeField] private float dampTime = 0.1f;
     private Animator animator;
     private Player player;
-    private readonly string MOVE_FORWARD_BOOL = "MoveForward";
-    private readonly string MOVE_BACKWARD_BOOL = "MoveBackward";
+    private readonly string VERTICAL_DIRECTION = "VerticalMovement";
+    private readonly string HORIZONTAL_DIRECTION = "HorizontalMovement";
+    private readonly string MOVEMENT_BOOL = "Moving";
+    Vector3 pointerMovementVector;
     // Start is called before the first frame update
     void Start() {
         animator = GetComponent<Animator>();
@@ -20,17 +23,14 @@ public class PlayerVisual : MonoBehaviour {
     }
 
     private void SetMovement() {
-        if (player.GetPlayerMovementVectorRelativeToPointer().z > 0) {
-            animator.SetBool(MOVE_FORWARD_BOOL, true);
-            animator.SetBool(MOVE_BACKWARD_BOOL, false);
-        }
-        else if (player.GetPlayerMovementVectorRelativeToPointer().z < 0) {
-            animator.SetBool(MOVE_FORWARD_BOOL, false);
-            animator.SetBool(MOVE_BACKWARD_BOOL, true);
+        pointerMovementVector = player.GetPlayerMovementVectorRelativeToPointer();
+        if (pointerMovementVector != Vector3.zero) {
+            animator.SetFloat(VERTICAL_DIRECTION, pointerMovementVector.z, dampTime, Time.deltaTime);
+            animator.SetFloat(HORIZONTAL_DIRECTION, pointerMovementVector.x, dampTime, Time.deltaTime);
+            animator.SetBool(MOVEMENT_BOOL, true);
         }
         else {
-            animator.SetBool(MOVE_FORWARD_BOOL, false);
-            animator.SetBool(MOVE_BACKWARD_BOOL, false);
+            animator.SetBool(MOVEMENT_BOOL, false);
         }
     }
 }
