@@ -42,6 +42,9 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     #region Attacks
 
     private void Attack1() {
+        if (attackListSO.attackList[0].attackSpawnVFX != null) {
+            Instantiate(attackListSO.attackList[0].attackSpawnVFX, attackSpawnPoint);
+        }
         Instantiate(attackListSO.attackList[0].attackPrefab, attackSpawnPoint.transform.position, attackSpawnPoint.rotation);
     }
 

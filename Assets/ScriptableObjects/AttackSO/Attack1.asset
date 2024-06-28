@@ -14,5 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackPrefab: {fileID: 1065485053486995293, guid: a7cf77c3e2ef7de458e14944add81809,
     type: 3}
+  attackSpawnVFX: {fileID: 642391246648651205, guid: b55bc88a3fdc9c1419041cbeb7225d0a,
+    type: 3}
   attackSprite: {fileID: 0}
   attackName: X-Projectile
