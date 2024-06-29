@@ -20,7 +20,7 @@ public class Attack1 : BaseAttack {
     }
 
     public override void OnHit(IHittable hitObject) {
-        if (hitObject.GetType() == hittableTarget || hitObject.GetType() == HittableType.Environment) {
+        if (hitObject.GetHittableType() == hittableTarget || hitObject.GetHittableType() == HittableType.Environment) {
             hitObject.Hit(this);
             Destroy(this.gameObject);
         }

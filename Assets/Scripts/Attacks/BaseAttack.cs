@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class BaseAttack : MonoBehaviour {
-    protected HittableType hittableTarget;
+    [SerializeField] protected HittableType hittableTarget;
     [SerializeField] protected AttackSO attackData;
     [SerializeField] protected int damage;
 
     public virtual void OnHit(IHittable hitObject) {
-        if (hitObject.GetType() == hittableTarget || hitObject.GetType() == HittableType.Environment) {
+        if (hitObject.GetHittableType() == hittableTarget || hitObject.GetHittableType() == HittableType.Environment) {
             hitObject.Hit(this);
         }
     }

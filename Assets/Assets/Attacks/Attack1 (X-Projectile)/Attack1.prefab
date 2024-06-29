@@ -199,6 +199,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94f74470835e63046a69e6fc59d2bbbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hittableTarget: 1
   attackData: {fileID: 11400000, guid: e9769054730e93e48b50fc929c42637d, type: 2}
   damage: 10
   attackSpeed: 30
