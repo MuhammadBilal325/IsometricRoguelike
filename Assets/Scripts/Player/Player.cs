@@ -1,5 +1,6 @@
 using Cinemachine.Utility;
 using KinematicCharacterController;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -10,6 +11,13 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
     public static Player Instance { get; private set; }
 
+    public event EventHandler Attack1Pressed;
+    public event EventHandler Attack2Pressed;
+    [SerializeField] private float attack1Delay;
+    [SerializeField] private float attack1CoolDown;
+    [SerializeField] private float attack1Shake;
+    private float attackCooldown;
+    private Coroutine attackCoroutine;
     [SerializeField] private Transform attackSpawnPoint;
     [SerializeField] private AttackListSO attackListSO;
     //Movement
@@ -35,17 +43,38 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
     #region Inputs
     private void GameInput_Attack1Pressed(object sender, System.EventArgs e) {
-        Attack1();
+        if (attackCooldown <= 0) {
+            attackCooldown = attack1CoolDown;
+            Attack1();
+        }
     }
     #endregion
 
     #region Attacks
 
     private void Attack1() {
-        if (attackListSO.attackList[0].attackSpawnVFX != null) {
-            Instantiate(attackListSO.attackList[0].attackSpawnVFX, attackSpawnPoint);
+        Attack1Pressed?.Invoke(this, EventArgs.Empty);
+        CameraController.Instance.AddTrauma(attack1Shake);
+        if (attackCoroutine == null) {
+            attackCoroutine = StartCoroutine(AttackCoroutine(attackListSO.attackList[0], attack1Delay, false));
         }
-        Instantiate(attackListSO.attackList[0].attackPrefab, attackSpawnPoint.transform.position, attackSpawnPoint.rotation);
+    }
+
+    IEnumerator AttackCoroutine(AttackSO attack, float delay, bool isParented) {
+        yield return new WaitForSeconds(delay);
+        if (!isParented) {
+            if (attack.attackSpawnVFX != null) {
+                Instantiate(attack.attackSpawnVFX, attackSpawnPoint.transform.position, attackSpawnPoint.rotation);
+            }
+            Instantiate(attack.attackPrefab, attackSpawnPoint.transform.position, attackSpawnPoint.rotation);
+        }
+        else {
+            if (attack.attackSpawnVFX != null) {
+                Instantiate(attack.attackSpawnVFX, attackSpawnPoint);
+            }
+            Instantiate(attack.attackPrefab, attackSpawnPoint);
+        }
+        attackCoroutine = null;
     }
 
     #endregion
@@ -53,6 +82,9 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
     // Update is called once per frame
     void Update() {
+        if (attackCooldown > 0) {
+            attackCooldown -= Time.deltaTime;
+        }
         ReorientPlayerRotationToPointer();
         ReorientMovementVectorToCamera();
     }

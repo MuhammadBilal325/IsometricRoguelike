@@ -10,11 +10,17 @@ public class PlayerVisual : MonoBehaviour {
     private readonly string VERTICAL_DIRECTION = "VerticalMovement";
     private readonly string HORIZONTAL_DIRECTION = "HorizontalMovement";
     private readonly string MOVEMENT_BOOL = "Moving";
+    private readonly string ATTACK1_TRIGGER = "Attack1";
     Vector3 pointerMovementVector;
     // Start is called before the first frame update
     void Start() {
         animator = GetComponent<Animator>();
         player = Player.Instance;
+        player.Attack1Pressed += Player_Attack1Pressed;
+    }
+
+    private void Player_Attack1Pressed(object sender, System.EventArgs e) {
+        Attack1Visual();
     }
 
     // Update is called once per frame
@@ -32,5 +38,9 @@ public class PlayerVisual : MonoBehaviour {
         else {
             animator.SetBool(MOVEMENT_BOOL, false);
         }
+    }
+
+    private void Attack1Visual() {
+        animator.SetTrigger(ATTACK1_TRIGGER);
     }
 }
