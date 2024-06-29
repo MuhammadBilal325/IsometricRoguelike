@@ -164,12 +164,10 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         if (Motor.GroundingStatus.IsStableOnGround) {
             // Reorient velocity on slope
             currentVelocity = Motor.GetDirectionTangentToSurface(currentVelocity, Motor.GroundingStatus.GroundNormal) * currentVelocity.magnitude;
-
             // Calculate target velocity
             Vector3 inputRight = Vector3.Cross(movementVector, Motor.CharacterUp);
             Vector3 reorientedInput = Vector3.Cross(Motor.GroundingStatus.GroundNormal, inputRight).normalized * movementVector.magnitude;
             targetMovementVelocity = reorientedInput * playerSpeed;
-
             // Smooth movement Velocity
             currentVelocity = Vector3.Lerp(currentVelocity, targetMovementVelocity, 1 - Mathf.Exp(-moveSharpness * deltaTime));
         }
@@ -177,20 +175,16 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
             // Add move input
             if (movementVector.sqrMagnitude > 0f) {
                 targetMovementVelocity = movementVector * playerSpeed;
-
                 // Prevent climbing on un-stable slopes with air movement
                 if (Motor.GroundingStatus.FoundAnyGround) {
                     Vector3 perpenticularObstructionNormal = Vector3.Cross(Vector3.Cross(Motor.CharacterUp, Motor.GroundingStatus.GroundNormal), Motor.CharacterUp).normalized;
                     targetMovementVelocity = Vector3.ProjectOnPlane(targetMovementVelocity, perpenticularObstructionNormal);
                 }
-
                 Vector3 velocityDiff = Vector3.ProjectOnPlane(targetMovementVelocity - currentVelocity, gravityVector);
                 currentVelocity += velocityDiff * playerSpeed * deltaTime;
             }
-
             // Gravity
             currentVelocity += gravityVector * deltaTime;
-
             // Drag
             currentVelocity *= (1f / (1f + (drag * deltaTime)));
         }

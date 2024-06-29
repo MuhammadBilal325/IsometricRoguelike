@@ -7,8 +7,13 @@ public class CameraController : MonoBehaviour {
     public static CameraController Instance { get; private set; }
     [SerializeField] private Transform player;
     [SerializeField] private Transform shakeEmpty;
-    [SerializeField] private float safeAreaX;
-    [SerializeField] private float safeAreaY;
+    private Vector2 quadrantBottomLeft;
+    private Vector2 quadrantTopRight;
+    private Vector2 quadrantMiddle;
+    private Vector3 quadrantMiddleOnPlayerPlane;
+
+    private float MinInfinity = Mathf.NegativeInfinity;
+    private float MaxInfinity = Mathf.Infinity;
     [SerializeField] private float cameraFollowSpeed;
     [SerializeField] private float maxYaw;
     [SerializeField] private float maxPitch;
@@ -45,14 +50,22 @@ public class CameraController : MonoBehaviour {
 
     // Update is called once per frame
     private void LateUpdate() {
+        CalculateSafeArea();
         if (!IsPlayerInSafeArea()) {
             MoveCamera();
         }
         HandleCameraShake();
     }
     private void MoveCamera() {
-        //Move camera to put player in centre again
-        transform.position = Vector3.Lerp(transform.position, player.position + playerOffset, Time.deltaTime * cameraFollowSpeed);
+        // Convert the player's world position to screen position
+        Ray ray = Camera.main.ScreenPointToRay(quadrantMiddle);
+        Plane playerPlane = new Plane(Vector3.up, player.transform.position);
+        Vector3 adjustmentVector = Vector3.zero;
+        if (playerPlane.Raycast(ray, out float enter)) {
+            quadrantMiddleOnPlayerPlane = ray.GetPoint(enter);
+            adjustmentVector = player.transform.position - quadrantMiddleOnPlayerPlane;
+            transform.position = Vector3.Lerp(transform.position, adjustmentVector, cameraFollowSpeed * Time.deltaTime);
+        }
     }
 
     private void MoveCameraToCentrePlayer() {
@@ -66,13 +79,40 @@ public class CameraController : MonoBehaviour {
         }
     }
     bool IsPlayerInSafeArea() {
-        Vector2 screenPos = Camera.main.WorldToScreenPoint(player.position);
-        screenPos.x -= Screen.width / 2;
-        screenPos.y -= Screen.height / 2;
-        if (screenPos.x < -safeAreaX || screenPos.x > safeAreaX || screenPos.y < -safeAreaY || screenPos.y > safeAreaY) {
-            return false;
+        Vector2 playerPosition = Camera.main.WorldToScreenPoint(player.position);
+        if (playerPosition.x >= quadrantBottomLeft.x
+            && playerPosition.x <= quadrantTopRight.x
+            && playerPosition.y >= quadrantBottomLeft.y
+            && playerPosition.y <= quadrantTopRight.y) {
+            return true;
         }
-        return true;
+        return false;
+    }
+
+    private void CalculateSafeArea() {
+        Vector2 pointerPos = Input.mousePosition;
+        int screenWidthMiddle = Screen.width / 2;
+        int screenHeightMiddle = Screen.height / 2;
+        if (pointerPos.x < screenHeightMiddle && pointerPos.y < screenHeightMiddle) {
+            quadrantBottomLeft = new Vector2(screenWidthMiddle, screenHeightMiddle);
+            quadrantTopRight = new Vector2(MaxInfinity, MaxInfinity);
+            quadrantMiddle = new Vector2((screenWidthMiddle + Screen.width) / 2f, (screenHeightMiddle + Screen.height) / 2f);
+        }
+        else if (pointerPos.x < screenWidthMiddle && pointerPos.y > screenHeightMiddle) {
+            quadrantBottomLeft = new Vector2(screenWidthMiddle, MinInfinity);
+            quadrantTopRight = new Vector2(MaxInfinity, screenHeightMiddle);
+            quadrantMiddle = new Vector2((screenWidthMiddle + Screen.width) / 2f, screenHeightMiddle / 2f);
+        }
+        else if (pointerPos.x > screenWidthMiddle && pointerPos.y < screenHeightMiddle) {
+            quadrantBottomLeft = new Vector2(MinInfinity, screenHeightMiddle);
+            quadrantTopRight = new Vector2(screenWidthMiddle, MaxInfinity);
+            quadrantMiddle = new Vector2(screenWidthMiddle / 2f, (screenHeightMiddle + Screen.height) / 2f);
+        }
+        else if (pointerPos.x > screenWidthMiddle && pointerPos.y > screenHeightMiddle) {
+            quadrantBottomLeft = new Vector2(MinInfinity, MinInfinity);
+            quadrantTopRight = new Vector2(screenWidthMiddle, screenHeightMiddle);
+            quadrantMiddle = new Vector2(screenWidthMiddle / 2f, screenHeightMiddle / 2f);
+        }
     }
 
     private void HandleCameraShake() {
