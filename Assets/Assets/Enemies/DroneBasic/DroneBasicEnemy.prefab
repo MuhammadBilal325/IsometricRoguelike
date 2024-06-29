@@ -359,7 +359,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8584092749779440426}
-  - component: {fileID: 4182585282773329944}
+  - component: {fileID: 2943313060936239801}
+  - component: {fileID: 4434860327693065839}
   - component: {fileID: 8488115048427910430}
   m_Layer: 0
   m_Name: DroneBasicEnemy
@@ -385,9 +386,9 @@ Transform:
   - {fileID: 8135621980084729372}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &4182585282773329944
-SphereCollider:
-  m_ObjectHideFlags: 0
+--- !u!136 &2943313060936239801
+CapsuleCollider:
+  m_ObjectHideFlags: 8
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -403,9 +404,53 @@ SphereCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 1.1
-  m_Center: {x: 0, y: 1.2, z: 0}
+  serializedVersion: 2
+  m_Radius: 1.055
+  m_Height: 2.89
+  m_Direction: 1
+  m_Center: {x: 0, y: 1.445, z: 0}
+--- !u!114 &4434860327693065839
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8838030502320465045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d1bc5515e3ab954e80599c538834774, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Capsule: {fileID: 2943313060936239801}
+  CapsuleRadius: 1.055
+  CapsuleHeight: 2.89
+  CapsuleYOffset: 1.445
+  CapsulePhysicsMaterial: {fileID: 0}
+  GroundDetectionExtraDistance: 0
+  MaxStableSlopeAngle: 60
+  StableGroundLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  DiscreteCollisionEvents: 0
+  StepHandling: 1
+  MaxStepHeight: 0.5
+  AllowSteppingWithoutStableGrounding: 0
+  MinRequiredStepDepth: 0.1
+  LedgeAndDenivelationHandling: 1
+  MaxStableDistanceFromLedge: 0.5
+  MaxVelocityForLedgeSnap: 0
+  MaxStableDenivelationAngle: 180
+  InteractiveRigidbodyHandling: 1
+  RigidbodyInteractionType: 0
+  SimulatedCharacterMass: 1
+  PreserveAttachedRigidbodyMomentum: 1
+  HasPlanarConstraint: 0
+  PlanarConstraintAxis: {x: 0, y: 0, z: 1}
+  MaxMovementIterations: 5
+  MaxDecollisionIterations: 1
+  CheckMovementInitialOverlaps: 1
+  KillVelocityWhenExceedMaxMovementIterations: 1
+  KillRemainingMovementWhenExceedMaxMovementIterations: 1
 --- !u!114 &8488115048427910430
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -419,9 +464,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 50
-  idleRange: 0
-  attackRange: 0
-  speed: 0
+  idleRange: 15
+  deaggroRange: 20
+  attackRange: 10
+  speed: 5
+  turnSharpness: 5
+  drag: 0.1
+  Motor: {fileID: 4434860327693065839}
 --- !u!1001 &6321578656291837775
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -519,5 +568,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   baseEnemy: {fileID: 8488115048427910430}
-  flashSpeed: 2
+  flashSpeed: 3
   flashColor: {r: 8, g: 8, b: 8, a: 0}
