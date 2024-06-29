@@ -231,12 +231,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abdb094897cf17b4d8d84e7e3677a0be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  attack1Delay: 0.1
+  attack1Delay: 0.15
   attack1CoolDown: 0.5
   attack1Shake: 0.4
+  attack1Pushback: 0
   attackSpawnPoint: {fileID: 1834171043}
   attackListSO: {fileID: 11400000, guid: 86f1dd07d4038f54aa62a75f6e4647aa, type: 2}
-  playerSpeed: 500
+  playerSpeed: 10
+  moveSharpness: 20
+  drag: 0.1
   gravityVector: {x: 0, y: -30, z: 0}
   Motor: {fileID: 127985380}
 --- !u!114 &127985380

@@ -3,6 +3,7 @@ using KinematicCharacterController;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -16,17 +17,20 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     [SerializeField] private float attack1Delay;
     [SerializeField] private float attack1CoolDown;
     [SerializeField] private float attack1Shake;
+    [SerializeField] private float attack1Pushback;
     private float attackCooldown;
     private Coroutine attackCoroutine;
     [SerializeField] private Transform attackSpawnPoint;
     [SerializeField] private AttackListSO attackListSO;
     //Movement
     [SerializeField] private float playerSpeed;
+    [SerializeField] private float moveSharpness;
+    [SerializeField] private float drag;
     [SerializeField] private Vector3 gravityVector;
     [SerializeField] private KinematicCharacterMotor Motor;
     private Vector3 movementVector;
     private float playerToPointerAngle = 0f;
-
+    private Vector3 addVelocity;
     //Rotation
     private Vector3 pointerPositionOnPlayerPlane;
     private Quaternion playerRotation;
@@ -38,6 +42,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
     // Start is called before the first frame update
     void Start() {
+        addVelocity = Vector3.zero;
         GameInput.Instance.Attack1Pressed += GameInput_Attack1Pressed;
         Motor.CharacterController = this;
     }
@@ -54,26 +59,23 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
     private void Attack1() {
         Attack1Pressed?.Invoke(this, EventArgs.Empty);
+        AddVelocity(transform.forward * attack1Pushback);
         CameraController.Instance.AddTrauma(attack1Shake);
         if (attackCoroutine == null) {
-            attackCoroutine = StartCoroutine(AttackCoroutine(attackListSO.attackList[0], attack1Delay, false));
+            attackCoroutine = StartCoroutine(AttackCoroutine(Attack1Callback, attack1Delay));
         }
     }
 
-    IEnumerator AttackCoroutine(AttackSO attack, float delay, bool isParented) {
+    private void Attack1Callback() {
+        if (attackListSO.attackList[0].attackSpawnVFX != null) {
+            Instantiate(attackListSO.attackList[0].attackSpawnVFX, attackSpawnPoint.transform.position, attackSpawnPoint.rotation);
+        }
+        Instantiate(attackListSO.attackList[0].attackPrefab, attackSpawnPoint.transform.position, attackSpawnPoint.rotation);
+    }
+
+    IEnumerator AttackCoroutine(System.Action attackSpawnCallback, float delay) {
         yield return new WaitForSeconds(delay);
-        if (!isParented) {
-            if (attack.attackSpawnVFX != null) {
-                Instantiate(attack.attackSpawnVFX, attackSpawnPoint.transform.position, attackSpawnPoint.rotation);
-            }
-            Instantiate(attack.attackPrefab, attackSpawnPoint.transform.position, attackSpawnPoint.rotation);
-        }
-        else {
-            if (attack.attackSpawnVFX != null) {
-                Instantiate(attack.attackSpawnVFX, attackSpawnPoint);
-            }
-            Instantiate(attack.attackPrefab, attackSpawnPoint);
-        }
+        attackSpawnCallback();
         attackCoroutine = null;
     }
 
@@ -148,6 +150,9 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     public void ProcessHitStabilityReport(Collider hitCollider, Vector3 hitNormal, Vector3 hitPoint, Vector3 atCharacterPosition, Quaternion atCharacterRotation, ref HitStabilityReport hitStabilityReport) {
     }
 
+    public void AddVelocity(Vector3 vel) {
+        addVelocity += vel;
+    }
     public void UpdateRotation(ref Quaternion currentRotation, float deltaTime) {
         currentRotation = playerRotation;
         currentRotation.x = 0;
@@ -155,12 +160,44 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime) {
-        currentVelocity.x = 0;
-        currentVelocity.z = 0;
-        //Horizontal Movement
-        currentVelocity += movementVector * playerSpeed * deltaTime;
-        //Gravity
-        currentVelocity += gravityVector * deltaTime;
+        Vector3 targetMovementVelocity = Vector3.zero;
+        if (Motor.GroundingStatus.IsStableOnGround) {
+            // Reorient velocity on slope
+            currentVelocity = Motor.GetDirectionTangentToSurface(currentVelocity, Motor.GroundingStatus.GroundNormal) * currentVelocity.magnitude;
+
+            // Calculate target velocity
+            Vector3 inputRight = Vector3.Cross(movementVector, Motor.CharacterUp);
+            Vector3 reorientedInput = Vector3.Cross(Motor.GroundingStatus.GroundNormal, inputRight).normalized * movementVector.magnitude;
+            targetMovementVelocity = reorientedInput * playerSpeed;
+
+            // Smooth movement Velocity
+            currentVelocity = Vector3.Lerp(currentVelocity, targetMovementVelocity, 1 - Mathf.Exp(-moveSharpness * deltaTime));
+        }
+        else {
+            // Add move input
+            if (movementVector.sqrMagnitude > 0f) {
+                targetMovementVelocity = movementVector * playerSpeed;
+
+                // Prevent climbing on un-stable slopes with air movement
+                if (Motor.GroundingStatus.FoundAnyGround) {
+                    Vector3 perpenticularObstructionNormal = Vector3.Cross(Vector3.Cross(Motor.CharacterUp, Motor.GroundingStatus.GroundNormal), Motor.CharacterUp).normalized;
+                    targetMovementVelocity = Vector3.ProjectOnPlane(targetMovementVelocity, perpenticularObstructionNormal);
+                }
+
+                Vector3 velocityDiff = Vector3.ProjectOnPlane(targetMovementVelocity - currentVelocity, gravityVector);
+                currentVelocity += velocityDiff * playerSpeed * deltaTime;
+            }
+
+            // Gravity
+            currentVelocity += gravityVector * deltaTime;
+
+            // Drag
+            currentVelocity *= (1f / (1f + (drag * deltaTime)));
+        }
+        if (addVelocity.sqrMagnitude > 0f) {
+            currentVelocity += addVelocity;
+            addVelocity = Vector3.zero;
+        }
     }
 
     public Vector3 GetPlayerMovementVectorRelativeToPointer() {
