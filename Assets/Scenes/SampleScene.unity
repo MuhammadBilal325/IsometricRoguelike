@@ -234,6 +234,7 @@ MonoBehaviour:
   maxHealth: 1000
   attack1Shake: 0.4
   attack1Pushback: -10
+  attack2Pushback: 10
   attackSpawnPoint: {fileID: 1834171043}
   attackComboListSO: {fileID: 11400000, guid: 3e4bc98cffeb78d4f881f8bf82190eb9, type: 2}
   playerSpeed: 10

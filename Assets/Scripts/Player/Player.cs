@@ -34,6 +34,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     [Header("Attacks")]
     [SerializeField] private float attack1Shake;
     [SerializeField] private float attack1Pushback;
+    [SerializeField] private float attack2Pushback;
     private float attackCooldown;
     private Coroutine attackCoroutine;
     private bool hitPaused = false;
@@ -116,6 +117,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
     private void Attack2() {
         Attack2Pressed?.Invoke(this, EventArgs.Empty);
+        AddVelocity(transform.forward * attack2Pushback);
         if (attackCoroutine == null) {
             attackCoroutine = StartCoroutine(AttackCoroutine(true, attackComboListSO.attackCombos[currentAttackComboIndex].attacks[currentAttackIndex].attackDelay));
         }
@@ -151,7 +153,12 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     IEnumerator DestroyCoroutine(GameObject obj, float duration) {
-        yield return new WaitForSeconds(duration);
+        float time = 0;
+        while (time < duration) {
+            if (!hitPaused)
+                time += Time.deltaTime;
+            yield return null;
+        }
         if (obj != null)
             Destroy(obj);
     }

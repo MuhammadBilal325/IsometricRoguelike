@@ -112,3 +112,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hittableTarget: 1
   attackData: {fileID: 0}
+  hitPauseTime: 0.1
+  trauma: 0.3
