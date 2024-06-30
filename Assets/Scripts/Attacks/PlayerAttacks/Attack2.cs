@@ -2,17 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class LaserBeamAttack : BaseAttack {
+public class Attack2 : BaseAttack {
 
-    private float spawnTime = 0f;
-    void Start() {
-    }
-
-    void Update() {
-        spawnTime += Time.deltaTime;
-        if (spawnTime >= attackData.attackDuration)
-            Destroy(this.gameObject);
-    }
 
 
     public override void OnHit(IHittable hitObject) {
@@ -27,10 +18,4 @@ public class LaserBeamAttack : BaseAttack {
             OnHit(hitObject);
         }
     }
-
-    public float GetDuration() {
-        return attackData.attackDuration;
-    }
-
-
 }

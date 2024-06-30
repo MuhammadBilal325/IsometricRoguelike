@@ -18,3 +18,7 @@ MonoBehaviour:
     type: 3}
   attackSprite: {fileID: 0}
   attackName: X-Projectile
+  attackDuration: 20
+  attackCooldown: 0.5
+  attackDelay: 0.1
+  attackDamage: 10

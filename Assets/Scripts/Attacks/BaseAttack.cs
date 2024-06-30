@@ -5,7 +5,6 @@ using UnityEngine;
 public class BaseAttack : MonoBehaviour {
     [SerializeField] protected HittableType hittableTarget;
     [SerializeField] protected AttackSO attackData;
-    [SerializeField] protected int damage;
 
     public virtual void OnHit(IHittable hitObject) {
         if (hitObject.GetHittableType() == hittableTarget || hitObject.GetHittableType() == HittableType.Environment) {
@@ -14,7 +13,7 @@ public class BaseAttack : MonoBehaviour {
     }
 
     public virtual int GetDamage() {
-        return damage;
+        return attackData.attackDamage;
     }
 
     public virtual HittableType GetTarget() {

@@ -3,6 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [CreateAssetMenu()]
-public class AttackListSO : ScriptableObject {
-    public List<AttackSO> attackList;
+public class AttackComboListSO : ScriptableObject {
+    public List<AttackComboSO> attackCombos;
 }

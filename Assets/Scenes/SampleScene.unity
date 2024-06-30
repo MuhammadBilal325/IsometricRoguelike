@@ -231,13 +231,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abdb094897cf17b4d8d84e7e3677a0be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
-  attack1Delay: 0.15
-  attack1CoolDown: 0.5
+  maxHealth: 1000
   attack1Shake: 0.4
   attack1Pushback: -10
   attackSpawnPoint: {fileID: 1834171043}
-  attackListSO: {fileID: 11400000, guid: 86f1dd07d4038f54aa62a75f6e4647aa, type: 2}
+  attackComboListSO: {fileID: 11400000, guid: 3e4bc98cffeb78d4f881f8bf82190eb9, type: 2}
   playerSpeed: 10
   moveSharpness: 20
   drag: 0.1
@@ -1856,6 +1854,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: DroneBasicEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8838030502320465045, guid: 14e2593331b7f4e40a4bb7bd285551ee,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

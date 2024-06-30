@@ -30,14 +30,15 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
     //Attacks
     [Header("Attacks")]
-    [SerializeField] private float attack1Delay;
-    [SerializeField] private float attack1CoolDown;
     [SerializeField] private float attack1Shake;
     [SerializeField] private float attack1Pushback;
     private float attackCooldown;
     private Coroutine attackCoroutine;
     [SerializeField] private Transform attackSpawnPoint;
-    [SerializeField] private AttackListSO attackListSO;
+    [SerializeField] private AttackComboListSO attackComboListSO;
+    private int currentAttackIndex = 0;
+    private int currentAttackComboIndex = -1;
+    private float attackComboTimer = 0f;
     //Movement
     [Header("Movement")]
     [SerializeField] private float playerSpeed;
@@ -63,41 +64,90 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     void Start() {
         addVelocity = Vector3.zero;
         GameInput.Instance.Attack1Pressed += GameInput_Attack1Pressed;
+        GameInput.Instance.Attack2Pressed += GameInput_Attack2Pressed;
         Motor.CharacterController = this;
     }
     #region Inputs
     private void GameInput_Attack1Pressed(object sender, System.EventArgs e) {
         if (attackCooldown <= 0 && state == State.Alive) {
-            attackCooldown = attack1CoolDown;
+            SetAttackIndexAndTimer(0);
             Attack1();
         }
     }
+    private void GameInput_Attack2Pressed(object sender, System.EventArgs e) {
+
+        if (attackCooldown <= 0 && state == State.Alive) {
+            SetAttackIndexAndTimer(1);
+            Attack2();
+        }
+    }
+
     #endregion
 
     #region Attacks
 
+    private void SetAttackIndexAndTimer(int attackComboIndex) {
+        //if attackCooldown is done and player is alive
+        if (currentAttackComboIndex == attackComboIndex && attackComboTimer > 0) {
+            //If players last input was the same attack combo and the timer is still running
+            currentAttackIndex++;
+            currentAttackIndex %= attackComboListSO.attackCombos[attackComboIndex].attacks.Count;
+        }
+        else {
+            //If the player is starting a new combo
+            currentAttackIndex = 0;
+            currentAttackComboIndex = attackComboIndex;
+        }
+        attackComboTimer = attackComboListSO.attackCombos[currentAttackComboIndex].resetTime;
+        attackCooldown = attackComboListSO.attackCombos[currentAttackComboIndex].attacks[currentAttackIndex].attackCooldown;
+
+    }
     private void Attack1() {
         Attack1Pressed?.Invoke(this, EventArgs.Empty);
         AddVelocity(transform.forward * attack1Pushback);
         CameraController.Instance.AddTrauma(attack1Shake);
         if (attackCoroutine == null) {
-            attackCoroutine = StartCoroutine(AttackCoroutine(Attack1Callback, attack1Delay));
+            attackCoroutine = StartCoroutine(AttackCoroutine(false, attackComboListSO.attackCombos[currentAttackComboIndex].attacks[currentAttackIndex].attackDelay));
         }
     }
-
-    private void Attack1Callback() {
-        if (attackListSO.attackList[0].attackSpawnVFX != null) {
-            Instantiate(attackListSO.attackList[0].attackSpawnVFX, attackSpawnPoint.transform.position, attackSpawnPoint.rotation);
+    private void Attack2() {
+        Attack2Pressed?.Invoke(this, EventArgs.Empty);
+        if (attackCoroutine == null) {
+            attackCoroutine = StartCoroutine(AttackCoroutine(true, attackComboListSO.attackCombos[currentAttackComboIndex].attacks[currentAttackIndex].attackDelay));
         }
-        Instantiate(attackListSO.attackList[0].attackPrefab, attackSpawnPoint.transform.position, attackSpawnPoint.rotation);
+    }
+    private void AttackCallback(bool isParent) {
+        if (attackComboListSO.attackCombos[currentAttackComboIndex].attacks[currentAttackIndex].attackSpawnVFX != null) {
+            Transform attackVFX;
+            if (isParent) {
+                attackVFX = Instantiate(attackComboListSO.attackCombos[currentAttackComboIndex].attacks[currentAttackIndex].attackSpawnVFX, attackSpawnPoint);
+            }
+            else {
+                attackVFX = Instantiate(attackComboListSO.attackCombos[currentAttackComboIndex].attacks[currentAttackIndex].attackSpawnVFX, attackSpawnPoint.position, attackSpawnPoint.rotation);
+            }
+            StartCoroutine(DestroyCoroutine(attackVFX.gameObject, attackComboListSO.attackCombos[currentAttackComboIndex].attacks[currentAttackIndex].attackDuration));
+        }
+        Transform attack;
+        if (isParent) {
+            attack = Instantiate(attackComboListSO.attackCombos[currentAttackComboIndex].attacks[currentAttackIndex].attackPrefab, attackSpawnPoint);
+        }
+        else {
+            attack = Instantiate(attackComboListSO.attackCombos[currentAttackComboIndex].attacks[currentAttackIndex].attackPrefab, attackSpawnPoint.position, attackSpawnPoint.rotation);
+        }
+        StartCoroutine(DestroyCoroutine(attack.gameObject, attackComboListSO.attackCombos[currentAttackComboIndex].attacks[currentAttackIndex].attackDuration));
     }
 
-    IEnumerator AttackCoroutine(System.Action attackSpawnCallback, float delay) {
+    IEnumerator AttackCoroutine(bool isParent, float delay) {
         yield return new WaitForSeconds(delay);
-        attackSpawnCallback();
+        AttackCallback(isParent);
         attackCoroutine = null;
     }
 
+    IEnumerator DestroyCoroutine(GameObject obj, float duration) {
+        yield return new WaitForSeconds(duration);
+        if (obj != null)
+            Destroy(obj);
+    }
     #endregion
 
 
@@ -116,6 +166,9 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     private void UpdateAlive() {
         if (attackCooldown > 0) {
             attackCooldown -= Time.deltaTime;
+        }
+        if (attackComboTimer > 0) {
+            attackComboTimer -= Time.deltaTime;
         }
         ReorientPlayerRotationToPointer();
         ReorientMovementVectorToCamera();

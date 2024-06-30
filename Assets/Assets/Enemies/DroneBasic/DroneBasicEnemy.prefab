@@ -500,7 +500,7 @@ MonoBehaviour:
   deaggroRange: 20
   attackRange: 10
   attackPoint: {fileID: 2395010034888736861}
-  attackListSO: {fileID: 11400000, guid: b0dc7ae0afea1b44cab03fadd83ea6f6, type: 2}
+  attackComboListSO: {fileID: 11400000, guid: 81b409ad375976f45aa36e6943bce33d, type: 2}
   attack1Cooldown: 2
   speed: 5
   turnSharpness: 5

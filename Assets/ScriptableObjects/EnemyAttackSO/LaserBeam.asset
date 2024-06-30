@@ -17,3 +17,7 @@ MonoBehaviour:
   attackSpawnVFX: {fileID: 0}
   attackSprite: {fileID: 0}
   attackName: Laser Beam
+  attackDuration: 0.5
+  attackCooldown: 2
+  attackDelay: 0
+  attackDamage: 10

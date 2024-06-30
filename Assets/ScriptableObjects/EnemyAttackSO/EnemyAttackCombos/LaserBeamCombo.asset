@@ -9,8 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a1dbbf83ea9630944a4329f1602c6f63, type: 3}
-  m_Name: DroneBasicAttackListSO
+  m_Script: {fileID: 11500000, guid: 99d686d853638bd42b6e5b8b47853f88, type: 3}
+  m_Name: LaserBeamCombo
   m_EditorClassIdentifier: 
-  attackList:
+  attacks:
   - {fileID: 11400000, guid: c2be4628c196feb48ad8fecb404c4e4a, type: 2}
+  resetTime: 0

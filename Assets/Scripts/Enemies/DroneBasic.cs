@@ -14,7 +14,7 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
     [SerializeField] private float attackRange;
     //Attacks
     [SerializeField] private Transform attackPoint;
-    [SerializeField] private AttackListSO attackListSO;
+    [SerializeField] private AttackComboListSO attackComboListSO;
     [SerializeField] private float attack1Cooldown;
     private float attackTimer = 0f;
     //Movement
@@ -95,7 +95,7 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
 
         if (attackTimer <= 0f) {
             Attack1();
-            attackTimer = attack1Cooldown;
+            attackTimer = attackComboListSO.attackCombos[0].attacks[0].attackCooldown;
         }
         else {
             attackTimer -= Time.deltaTime;
@@ -103,7 +103,7 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
     }
 
     private void Attack1() {
-        Instantiate(attackListSO.attackList[0].attackPrefab, attackPoint);
+        Instantiate(attackComboListSO.attackCombos[0].attacks[0].attackPrefab, attackPoint);
     }
 
     //private void OnDrawGizmos() {

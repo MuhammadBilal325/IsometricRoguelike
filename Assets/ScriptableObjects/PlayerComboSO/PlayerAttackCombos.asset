@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a7e66e943b99a14092bd0880b3b52aa, type: 3}
+  m_Name: PlayerAttackCombos
+  m_EditorClassIdentifier: 
+  attackCombos:
+  - {fileID: 11400000, guid: 95cf327832c72b3419bb35cd55feff1a, type: 2}
+  - {fileID: 11400000, guid: 69ccc1a68c8d5d6468d40c9536be4990, type: 2}
