@@ -48,6 +48,9 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     [Header("Movement")]
     [SerializeField] private float playerSpeed;
     [SerializeField] private float moveSharpness;
+    [SerializeField] private float dashDistance;
+    [SerializeField] private float dashCooldownMax;
+    private float dashCooldown = 0f;
     [SerializeField] private float drag;
     [SerializeField] private Vector3 gravityVector;
     [SerializeField] private KinematicCharacterMotor Motor;
@@ -70,18 +73,23 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         addVelocity = Vector3.zero;
         GameInput.Instance.Attack1Pressed += GameInput_Attack1Pressed;
         GameInput.Instance.Attack2Pressed += GameInput_Attack2Pressed;
+        GameInput.Instance.DashPressed += GameInput_DashPressed;
         Motor.CharacterController = this;
     }
+
     #region Inputs
+    private void GameInput_DashPressed(object sender, EventArgs e) {
+        Dash();
+    }
     private void GameInput_Attack1Pressed(object sender, System.EventArgs e) {
-        if (attackCooldown <= 0 && state == State.Alive) {
+        if (attackCooldown <= 0 && state != State.Dead) {
             SetAttackIndexAndTimer(0);
             Attack1();
         }
     }
     private void GameInput_Attack2Pressed(object sender, System.EventArgs e) {
 
-        if (attackCooldown <= 0 && state == State.Alive) {
+        if (attackCooldown <= 0 && state != State.Dead) {
             SetAttackIndexAndTimer(1);
             Attack2();
         }
@@ -197,13 +205,16 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     private void UpdateAlive() {
-        if (!hitPaused) {
-            if (attackCooldown > 0) {
-                attackCooldown -= Time.deltaTime;
-            }
-            if (attackComboTimer > 0) {
-                attackComboTimer -= Time.deltaTime;
-            }
+        dashCooldown -= Time.deltaTime;
+        if (hitPaused) {
+            movementVector = Vector3.zero;
+            return;
+        }
+        if (attackCooldown > 0) {
+            attackCooldown -= Time.deltaTime;
+        }
+        if (attackComboTimer > 0) {
+            attackComboTimer -= Time.deltaTime;
         }
         ReorientPlayerRotationToPointer();
         ReorientMovementVectorToCamera();
@@ -236,7 +247,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     void ReorientPlayerRotationToPointer() {
         Vector3 pointer = Input.mousePosition;
         Ray ray = Camera.main.ScreenPointToRay(pointer);
-        Plane playerPlane = new Plane(Vector3.up, transform.position);
+        Plane playerPlane = new(Vector3.up, transform.position);
         if (playerPlane.Raycast(ray, out float enter)) {
             pointerPositionOnPlayerPlane = ray.GetPoint(enter);
         }
@@ -244,6 +255,14 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         playerRotation = Quaternion.LookRotation(pointerPositionRelativeToPlayer);
     }
 
+    private void Dash() {
+        if (dashCooldown > 0) {
+            return;
+        }
+        dashCooldown = dashCooldownMax;
+        AddVelocity(movementVector * dashDistance);
+
+    }
 
     #region KinematicCharacterController
     public void AfterCharacterUpdate(float deltaTime) {
@@ -304,7 +323,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
                     targetMovementVelocity = Vector3.ProjectOnPlane(targetMovementVelocity, perpenticularObstructionNormal);
                 }
                 Vector3 velocityDiff = Vector3.ProjectOnPlane(targetMovementVelocity - currentVelocity, gravityVector);
-                currentVelocity += velocityDiff * playerSpeed * deltaTime;
+                currentVelocity += playerSpeed * deltaTime * velocityDiff;
             }
             // Gravity
             currentVelocity += gravityVector * deltaTime;
@@ -316,6 +335,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
             addVelocity = Vector3.zero;
         }
     }
+
+
 
     public Vector3 GetPlayerMovementVectorRelativeToPointer() {
         if (movementVector == Vector3.zero) {
@@ -341,7 +362,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
     #region IHittable
     public void Hit(BaseAttack attack) {
-        if (state != State.Alive) {
+        if (state == State.Dead) {
             return;
         }
         if (attack.GetTarget() == HittableType.Player) {
@@ -372,5 +393,9 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         return state == State.Alive;
     }
 
+
+    public float GetNormalizedDashCooldown() {
+        return dashCooldown / dashCooldownMax;
+    }
     #endregion
 }

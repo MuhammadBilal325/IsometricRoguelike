@@ -27,10 +27,12 @@ public class Attack1 : BaseAttack {
     }
 
     private void OnCollisionEnter(Collision collision) {
-        IHittable hitObject = collision.gameObject.GetComponent<IHittable>();
-        if (hitObject != null) {
-            OnHit(hitObject);
+        if (collision.gameObject.TryGetComponent<IHittable>(out IHittable hitObject)) {
+            if (hitObject != null) {
+                OnHit(hitObject);
+            }
         }
+
     }
 }
 

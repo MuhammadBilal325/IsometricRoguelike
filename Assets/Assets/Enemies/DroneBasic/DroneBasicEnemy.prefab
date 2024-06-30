@@ -499,10 +499,10 @@ MonoBehaviour:
   idleRange: 15
   deaggroRange: 20
   attackRange: 10
+  panickRadius: 5
   attackPoint: {fileID: 2395010034888736861}
   attackComboListSO: {fileID: 11400000, guid: 81b409ad375976f45aa36e6943bce33d, type: 2}
-  attack1Cooldown: 2
-  speed: 0
+  speed: 5
   turnSharpness: 5
   rotationSpeed: 2.5
   drag: 0.1

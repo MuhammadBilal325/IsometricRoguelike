@@ -5,7 +5,6 @@ using UnityEngine;
 public class AttackSO : ScriptableObject {
     public Transform attackPrefab;
     public Transform attackSpawnVFX;
-    public Sprite attackSprite;
     public string attackName;
     public float attackDuration;
     public float attackCooldown;

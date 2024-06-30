@@ -12,10 +12,10 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
     [SerializeField] private float idleRange;
     [SerializeField] private float deaggroRange;
     [SerializeField] private float attackRange;
+    [SerializeField] private float panickRadius;
     //Attacks
     [SerializeField] private Transform attackPoint;
     [SerializeField] private AttackComboListSO attackComboListSO;
-    [SerializeField] private float attack1Cooldown;
     private float attackTimer = 0f;
     //Movement
     [SerializeField] private float speed;
@@ -64,7 +64,7 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
     private void Idle() {
         if (Vector3.SqrMagnitude(transform.position - Player.Instance.transform.position) < idleRange * idleRange && Player.Instance.IsAlive()) {
             state = State.Attack;
-            attackTimer = attack1Cooldown;
+            attackTimer = attackComboListSO.attackCombos[0].attacks[0].attackCooldown;
             return;
         }
         movementVector = Vector3.zero;
@@ -93,7 +93,7 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
             movementVector = Vector3.zero;
         }
 
-        if (attackTimer <= 0f) {
+        if (attackTimer <= 0f && Vector3.SqrMagnitude(transform.position - Player.Instance.transform.position) > panickRadius * panickRadius) {
             Attack1();
             attackTimer = attackComboListSO.attackCombos[0].attacks[0].attackCooldown;
         }

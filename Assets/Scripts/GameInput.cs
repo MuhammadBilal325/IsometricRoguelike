@@ -8,6 +8,7 @@ public class GameInput : MonoBehaviour {
     public static GameInput Instance { get; private set; }
     public event EventHandler Attack1Pressed;
     public event EventHandler Attack2Pressed;
+    public event EventHandler DashPressed;
     PlayerInputActions playerInputActions;
 
     private void Awake() {
@@ -23,6 +24,11 @@ public class GameInput : MonoBehaviour {
     void Start() {
         playerInputActions.Player.Attack_1.performed += Attack_1_performed;
         playerInputActions.Player.Attack_2.performed += Attack_2_performed;
+        playerInputActions.Player.Dash.performed += Dash_performed;
+    }
+
+    private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        DashPressed?.Invoke(this, EventArgs.Empty);
     }
 
     private void Attack_2_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
@@ -31,11 +37,6 @@ public class GameInput : MonoBehaviour {
 
     private void Attack_1_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
         Attack1Pressed?.Invoke(this, EventArgs.Empty);
-    }
-
-    // Update is called once per frame
-    void Update() {
-
     }
 
     public Vector2 GetNormalizedMovementVector() {

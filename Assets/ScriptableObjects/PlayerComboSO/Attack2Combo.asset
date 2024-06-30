@@ -17,3 +17,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d9921a1b5c9bb2e43bbc3779f22ed0f6, type: 2}
   - {fileID: 11400000, guid: d5bbcc6376d2ea94eb9b60c45651772d, type: 2}
   resetTime: 1
+  ComboSprite: {fileID: 21300000, guid: 01f0ddbabc7f5234da11bfbbc3de4fb4, type: 3}

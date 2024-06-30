@@ -15,3 +15,4 @@ MonoBehaviour:
   attacks:
   - {fileID: 11400000, guid: e9769054730e93e48b50fc929c42637d, type: 2}
   resetTime: 0
+  ComboSprite: {fileID: 21300000, guid: c6dca2720a410844e8798b29bde729bb, type: 3}
