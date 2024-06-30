@@ -8,12 +8,28 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class Player : MonoBehaviour, KinematicCharacterController.ICharacterController {
+public class Player : MonoBehaviour, KinematicCharacterController.ICharacterController, IHittable {
 
     public static Player Instance { get; private set; }
 
+    public enum State {
+        Alive,
+        Dead
+    }
+
     public event EventHandler Attack1Pressed;
     public event EventHandler Attack2Pressed;
+    public event EventHandler OnHit;
+    public event EventHandler OnDeath;
+
+    //Health
+    [Header("Health")]
+    [SerializeField] private int maxHealth;
+    private int health;
+    private State state;
+
+    //Attacks
+    [Header("Attacks")]
     [SerializeField] private float attack1Delay;
     [SerializeField] private float attack1CoolDown;
     [SerializeField] private float attack1Shake;
@@ -23,6 +39,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     [SerializeField] private Transform attackSpawnPoint;
     [SerializeField] private AttackListSO attackListSO;
     //Movement
+    [Header("Movement")]
     [SerializeField] private float playerSpeed;
     [SerializeField] private float moveSharpness;
     [SerializeField] private float drag;
@@ -38,6 +55,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
     private void Awake() {
         Instance = this;
+        health = maxHealth;
+        state = State.Alive;
     }
 
     // Start is called before the first frame update
@@ -48,7 +67,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
     #region Inputs
     private void GameInput_Attack1Pressed(object sender, System.EventArgs e) {
-        if (attackCooldown <= 0) {
+        if (attackCooldown <= 0 && state == State.Alive) {
             attackCooldown = attack1CoolDown;
             Attack1();
         }
@@ -84,12 +103,28 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
     // Update is called once per frame
     void Update() {
+        switch (state) {
+            case State.Alive:
+                UpdateAlive();
+                break;
+            case State.Dead:
+                UpdateDead();
+                break;
+        }
+    }
+
+    private void UpdateAlive() {
         if (attackCooldown > 0) {
             attackCooldown -= Time.deltaTime;
         }
         ReorientPlayerRotationToPointer();
         ReorientMovementVectorToCamera();
     }
+
+    private void UpdateDead() {
+        movementVector = Vector3.zero;
+    }
+
 
     void ReorientMovementVectorToCamera() {
         Vector3 inputVector = GameInput.Instance.GetMovementVector();
@@ -130,7 +165,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     public bool IsColliderValidForCollisions(Collider coll) {
-        if (coll.CompareTag(Tags.PLAYER_ATTACK_TAG))
+        if (coll.CompareTag(Tags.PLAYER_ATTACK_TAG) || coll.CompareTag(Tags.ENEMY_ATTACK_TAG))
             return false;
         return true;
     }
@@ -211,6 +246,39 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
             return Vector3.back;
         }
     }
+
+
     #endregion
 
+
+    #region IHittable
+    public void Hit(BaseAttack attack) {
+        if (attack.GetTarget() == HittableType.Player) {
+            CameraController.Instance.AddTrauma(0.5f);
+            health -= attack.GetDamage();
+            OnHit?.Invoke(this, EventArgs.Empty);
+            if (health <= 0) {
+                state = State.Dead;
+                OnDeath?.Invoke(this, EventArgs.Empty);
+            }
+        }
+    }
+
+    public int GetHealth() {
+        return health;
+    }
+
+    public int GetMaxHealth() {
+        return maxHealth;
+    }
+
+    public HittableType GetHittableType() {
+        return HittableType.Player;
+    }
+
+    public bool IsAlive() {
+        return state == State.Alive;
+    }
+
+    #endregion
 }

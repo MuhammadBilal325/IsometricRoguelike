@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 566695f5d28c66b4a8e23bb6e94d6336, type: 3}
+  m_Name: LaserBeam
+  m_EditorClassIdentifier: 
+  attackPrefab: {fileID: 7633622046484431565, guid: 1a8895e841986bc4ab86e037a0b07756,
+    type: 3}
+  attackSpawnVFX: {fileID: 0}
+  attackSprite: {fileID: 0}
+  attackName: Laser Beam

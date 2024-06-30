@@ -12,14 +12,19 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
     [SerializeField] private float idleRange;
     [SerializeField] private float deaggroRange;
     [SerializeField] private float attackRange;
-
+    //Attacks
+    [SerializeField] private Transform attackPoint;
+    [SerializeField] private AttackListSO attackListSO;
+    [SerializeField] private float attack1Cooldown;
+    private float attackTimer = 0f;
     //Movement
     [SerializeField] private float speed;
     [SerializeField] private float turnSharpness;
+    [SerializeField] private float rotationSpeed;
     [SerializeField] private float drag;
     [SerializeField] private KinematicCharacterMotor Motor;
+    [SerializeField] private Vector3 gravityVector;
     private Vector3 movementVector;
-    private Vector3 gravityVector;
     private Vector3 targetPosition;
     private Vector3 vectorToPlayer;
     //Forces
@@ -54,12 +59,12 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
                 Attack();
                 break;
         }
-        Debug.Log(state);
     }
 
     private void Idle() {
-        if (Vector3.SqrMagnitude(transform.position - Player.Instance.transform.position) < idleRange * idleRange) {
+        if (Vector3.SqrMagnitude(transform.position - Player.Instance.transform.position) < idleRange * idleRange && Player.Instance.IsAlive()) {
             state = State.Attack;
+            attackTimer = attack1Cooldown;
             return;
         }
         movementVector = Vector3.zero;
@@ -78,10 +83,23 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
         targetPosition *= attackRange;
         targetPosition += Player.Instance.transform.position;
         movementVector = targetPosition - transform.position;
+        movementVector.y = 0;
         movementVector.Normalize();
         if (Vector3.SqrMagnitude(transform.position - targetPosition) < 0.5f) {
             movementVector = Vector3.zero;
         }
+
+        if (attackTimer <= 0f) {
+            Attack1();
+            attackTimer = attack1Cooldown;
+        }
+        else {
+            attackTimer -= Time.deltaTime;
+        }
+    }
+
+    private void Attack1() {
+        Instantiate(attackListSO.attackList[0].attackPrefab, attackPoint);
     }
 
     //private void OnDrawGizmos() {
@@ -98,7 +116,7 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
     }
 
     public bool IsColliderValidForCollisions(Collider coll) {
-        if (coll.CompareTag(Tags.PLAYER_ATTACK_TAG))
+        if (coll.CompareTag(Tags.PLAYER_ATTACK_TAG) || coll.CompareTag(Tags.ENEMY_ATTACK_TAG))
             return false;
         return true;
     }
@@ -122,7 +140,8 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
         addForce += vel;
     }
     public void UpdateRotation(ref Quaternion currentRotation, float deltaTime) {
-        currentRotation = Quaternion.LookRotation(vectorToPlayer);
+        if (vectorToPlayer.sqrMagnitude > 0f)
+            currentRotation = Quaternion.Lerp(currentRotation, Quaternion.LookRotation(vectorToPlayer), deltaTime * rotationSpeed);
     }
 
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime) {

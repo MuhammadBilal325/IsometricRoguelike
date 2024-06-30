@@ -16,7 +16,6 @@ public class Obstacle : MonoBehaviour, IHittable {
 
     public void Hit(BaseAttack attack) {
         OnHit?.Invoke(this, EventArgs.Empty);
-        Debug.Log("Attack " + attack.GetName() + " hit obstacle " + this.name);
     }
 
     HittableType IHittable.GetHittableType() {

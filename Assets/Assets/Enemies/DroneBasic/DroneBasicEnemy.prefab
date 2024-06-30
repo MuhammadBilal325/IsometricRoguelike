@@ -275,6 +275,37 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!1 &5960853529709006674
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2395010034888736861}
+  m_Layer: 0
+  m_Name: AttackPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2395010034888736861
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5960853529709006674}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.8, z: 0.98}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8584092749779440426}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6946144226109731014
 GameObject:
   m_ObjectHideFlags: 0
@@ -384,6 +415,7 @@ Transform:
   m_Children:
   - {fileID: 5778253793997762724}
   - {fileID: 8135621980084729372}
+  - {fileID: 2395010034888736861}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!136 &2943313060936239801
@@ -405,10 +437,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 1.055
-  m_Height: 2.89
+  m_Radius: 1.09
+  m_Height: 2.19
   m_Direction: 1
-  m_Center: {x: 0, y: 1.445, z: 0}
+  m_Center: {x: 0, y: 0.97, z: 0}
 --- !u!114 &4434860327693065839
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -422,9 +454,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Capsule: {fileID: 2943313060936239801}
-  CapsuleRadius: 1.055
-  CapsuleHeight: 2.89
-  CapsuleYOffset: 1.445
+  CapsuleRadius: 1.09
+  CapsuleHeight: 2.19
+  CapsuleYOffset: 0.97
   CapsulePhysicsMaterial: {fileID: 0}
   GroundDetectionExtraDistance: 0
   MaxStableSlopeAngle: 60
@@ -467,10 +499,15 @@ MonoBehaviour:
   idleRange: 15
   deaggroRange: 20
   attackRange: 10
+  attackPoint: {fileID: 2395010034888736861}
+  attackListSO: {fileID: 11400000, guid: b0dc7ae0afea1b44cab03fadd83ea6f6, type: 2}
+  attack1Cooldown: 2
   speed: 5
   turnSharpness: 5
+  rotationSpeed: 5
   drag: 0.1
   Motor: {fileID: 4434860327693065839}
+  gravityVector: {x: 0, y: -30, z: 0}
 --- !u!1001 &6321578656291837775
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -529,10 +566,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 63d01f53d83f14d4baadc8f5ab8b2869,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 28ee1cf5e20c44949b27cbb98c7de2e3, type: 2}
     - target: {fileID: 919132149155446097, guid: 63d01f53d83f14d4baadc8f5ab8b2869,
         type: 3}
       propertyPath: m_Name
-      value: DroneBasic
+      value: DroneBasicVisual
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
