@@ -21,6 +21,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     public event EventHandler Attack2Pressed;
     public event EventHandler OnHit;
     public event EventHandler OnDeath;
+    public event EventHandler HitPauseStart;
+    public event EventHandler HitPauseEnd;
 
     //Health
     [Header("Health")]
@@ -34,6 +36,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     [SerializeField] private float attack1Pushback;
     private float attackCooldown;
     private Coroutine attackCoroutine;
+    private bool hitPaused = false;
+    private Coroutine hitPauseCoroutine = null;
     [SerializeField] private Transform attackSpawnPoint;
     [SerializeField] private AttackComboListSO attackComboListSO;
     private int currentAttackIndex = 0;
@@ -116,6 +120,9 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
             attackCoroutine = StartCoroutine(AttackCoroutine(true, attackComboListSO.attackCombos[currentAttackComboIndex].attacks[currentAttackIndex].attackDelay));
         }
     }
+
+
+
     private void AttackCallback(bool isParent) {
         if (attackComboListSO.attackCombos[currentAttackComboIndex].attacks[currentAttackIndex].attackSpawnVFX != null) {
             Transform attackVFX;
@@ -150,7 +157,24 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
     #endregion
 
+    #region HitPause
 
+    public void HitPause(float pauseTime) {
+        hitPaused = true;
+        HitPauseStart?.Invoke(this, EventArgs.Empty);
+        if (hitPauseCoroutine != null) {
+            StopCoroutine(hitPauseCoroutine);
+        }
+        hitPauseCoroutine = StartCoroutine(HitPauseCoroutine(pauseTime));
+    }
+
+    IEnumerator HitPauseCoroutine(float pauseTime) {
+        yield return new WaitForSeconds(pauseTime);
+        hitPaused = false;
+        HitPauseEnd?.Invoke(this, EventArgs.Empty);
+        hitPauseCoroutine = null;
+    }
+    #endregion
     // Update is called once per frame
     void Update() {
         switch (state) {
@@ -164,11 +188,13 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     private void UpdateAlive() {
-        if (attackCooldown > 0) {
-            attackCooldown -= Time.deltaTime;
-        }
-        if (attackComboTimer > 0) {
-            attackComboTimer -= Time.deltaTime;
+        if (!hitPaused) {
+            if (attackCooldown > 0) {
+                attackCooldown -= Time.deltaTime;
+            }
+            if (attackComboTimer > 0) {
+                attackComboTimer -= Time.deltaTime;
+            }
         }
         ReorientPlayerRotationToPointer();
         ReorientMovementVectorToCamera();

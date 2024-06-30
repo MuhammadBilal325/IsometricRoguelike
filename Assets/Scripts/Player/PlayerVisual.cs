@@ -11,12 +11,29 @@ public class PlayerVisual : MonoBehaviour {
     private readonly string HORIZONTAL_DIRECTION = "HorizontalMovement";
     private readonly string MOVEMENT_BOOL = "Moving";
     private readonly string ATTACK1_TRIGGER = "Attack1";
+    private bool isHitPaused;
+    private float originalSpeed;
     Vector3 pointerMovementVector;
     // Start is called before the first frame update
     void Start() {
         animator = GetComponent<Animator>();
         player = Player.Instance;
         player.Attack1Pressed += Player_Attack1Pressed;
+        player.HitPauseStart += Player_HitPauseStart;
+        player.HitPauseEnd += Player_HitPauseEnd;
+    }
+
+    private void Player_HitPauseEnd(object sender, System.EventArgs e) {
+        isHitPaused = false;
+        animator.speed = originalSpeed;
+    }
+
+    private void Player_HitPauseStart(object sender, System.EventArgs e) {
+        if (!isHitPaused) {
+            isHitPaused = true;
+            originalSpeed = animator.speed;
+            animator.speed = 0;
+        }
     }
 
     private void Player_Attack1Pressed(object sender, System.EventArgs e) {
