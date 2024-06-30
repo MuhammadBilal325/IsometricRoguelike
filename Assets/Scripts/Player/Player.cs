@@ -254,7 +254,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     #region IHittable
     public void Hit(BaseAttack attack) {
         if (attack.GetTarget() == HittableType.Player) {
-            CameraController.Instance.AddTrauma(0.5f);
+            CameraController.Instance.AddTrauma(0.2f);
             health -= attack.GetDamage();
             OnHit?.Invoke(this, EventArgs.Empty);
             if (health <= 0) {

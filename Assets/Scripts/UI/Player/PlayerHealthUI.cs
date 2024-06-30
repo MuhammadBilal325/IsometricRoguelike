@@ -1,14 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class PlayerHealthUI : MonoBehaviour {
     [SerializeField] private Image barImage;
+    [SerializeField] private TextMeshProUGUI healthText;
 
     // Start is called before the first frame update
     void Start() {
-        barImage.fillAmount = Player.Instance.GetHealth() / (float)Player.Instance.GetMaxHealth();
+        SetHealth();
         Player.Instance.OnHit += Player_OnHit; ;
     }
 
@@ -17,6 +19,7 @@ public class PlayerHealthUI : MonoBehaviour {
     }
 
     private void SetHealth() {
+        healthText.text = Player.Instance.GetHealth() + " / " + Player.Instance.GetMaxHealth();
         barImage.fillAmount = Player.Instance.GetHealth() / (float)Player.Instance.GetMaxHealth();
     }
 }

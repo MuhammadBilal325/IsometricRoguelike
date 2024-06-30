@@ -76,6 +76,10 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
             state = State.Idle;
             return;
         }
+        if (!Player.Instance.IsAlive()) {
+            state = State.Idle;
+            return;
+        }
         vectorToPlayer = (Player.Instance.transform.position - transform.position);
         targetPosition = (transform.position - Player.Instance.transform.position);
         targetPosition.y = Player.Instance.transform.position.y;
