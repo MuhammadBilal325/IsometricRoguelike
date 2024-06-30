@@ -504,7 +504,7 @@ MonoBehaviour:
   attack1Cooldown: 2
   speed: 5
   turnSharpness: 5
-  rotationSpeed: 5
+  rotationSpeed: 2.5
   drag: 0.1
   Motor: {fileID: 4434860327693065839}
   gravityVector: {x: 0, y: -30, z: 0}

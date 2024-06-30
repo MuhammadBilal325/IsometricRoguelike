@@ -253,8 +253,11 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
     #region IHittable
     public void Hit(BaseAttack attack) {
+        if (state != State.Alive) {
+            return;
+        }
         if (attack.GetTarget() == HittableType.Player) {
-            CameraController.Instance.AddTrauma(0.2f);
+            CameraController.Instance.AddTrauma(0.3f);
             health -= attack.GetDamage();
             OnHit?.Invoke(this, EventArgs.Empty);
             if (health <= 0) {
