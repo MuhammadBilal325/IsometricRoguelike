@@ -90,7 +90,9 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     #endregion
 
     #region Attacks
-
+    public int GetCurrentAttackIndex() {
+        return currentAttackIndex;
+    }
     private void SetAttackIndexAndTimer(int attackComboIndex) {
         //if attackCooldown is done and player is alive
         if (currentAttackComboIndex == attackComboIndex && attackComboTimer > 0) {
@@ -360,6 +362,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     public int GetMaxHealth() {
         return maxHealth;
     }
+
 
     public HittableType GetHittableType() {
         return HittableType.Player;

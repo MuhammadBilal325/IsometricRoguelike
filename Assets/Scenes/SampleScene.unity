@@ -502,6 +502,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dampTime: 0.1
+  maxAttackTimers:
+  - 0.1
+  - 1
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
