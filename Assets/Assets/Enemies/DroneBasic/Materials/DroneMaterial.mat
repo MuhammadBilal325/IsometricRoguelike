@@ -38,6 +38,7 @@ Material:
     - _Cull: 2
     - _DstBlend: 0
     - _EmissionMix: 1
+    - _EmissionMultiply: 20
     - _MetallicValue: 0.67
     - _RoughnessValue: 1
     - _Surface: 0

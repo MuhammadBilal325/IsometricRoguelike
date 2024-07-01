@@ -1,4 +1,5 @@
 using KinematicCharacterController;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,14 +10,20 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
         Idle,
         Attack,
     }
+    public event EventHandler<AttackEventArgs> StartAttack;
+    public class AttackEventArgs : EventArgs {
+        public float attackWarmUpTime;
+    }
     [SerializeField] private float idleRange;
     [SerializeField] private float deaggroRange;
     [SerializeField] private float attackRange;
     [SerializeField] private float panickRadius;
     //Attacks
     [SerializeField] private Transform attackPoint;
+    [SerializeField] private float attackWarmUp;
     [SerializeField] private AttackComboListSO attackComboListSO;
     private float attackTimer = 0f;
+    private Coroutine attackCoroutine;
     //Movement
     [SerializeField] private float speed;
     [SerializeField] private float turnSharpness;
@@ -94,6 +101,7 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
         }
 
         if (attackTimer <= 0f && Vector3.SqrMagnitude(transform.position - Player.Instance.transform.position) > panickRadius * panickRadius) {
+            //If player is in position make decision to attack and start animation
             Attack1();
             attackTimer = attackComboListSO.attackCombos[0].attacks[0].attackCooldown;
         }
@@ -103,7 +111,16 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
     }
 
     private void Attack1() {
+        if (attackCoroutine != null) {
+            StopCoroutine(attackCoroutine);
+        }
+        StartAttack?.Invoke(this, new AttackEventArgs { attackWarmUpTime = attackWarmUp });
+        attackCoroutine = StartCoroutine(AttackCoroutine(attackWarmUp));
+    }
+    private IEnumerator AttackCoroutine(float delay) {
+        yield return new WaitForSeconds(delay);
         Instantiate(attackComboListSO.attackCombos[0].attacks[0].attackPrefab, attackPoint);
+        attackCoroutine = null;
     }
 
     //private void OnDrawGizmos() {

@@ -13,7 +13,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     public static Player Instance { get; private set; }
 
     public enum State {
-        Alive,
+        Normal,
+        Dashing,
         Dead
     }
 
@@ -49,8 +50,10 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     [SerializeField] private float playerSpeed;
     [SerializeField] private float moveSharpness;
     [SerializeField] private float dashDistance;
+    [SerializeField] private float dashTime;
     [SerializeField] private float dashCooldownMax;
     private float dashCooldown = 0f;
+    private float dashTimer = 0f;
     [SerializeField] private float drag;
     [SerializeField] private Vector3 gravityVector;
     [SerializeField] private KinematicCharacterMotor Motor;
@@ -65,7 +68,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     private void Awake() {
         Instance = this;
         health = maxHealth;
-        state = State.Alive;
+        state = State.Normal;
     }
 
     // Start is called before the first frame update
@@ -79,7 +82,9 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
     #region Inputs
     private void GameInput_DashPressed(object sender, EventArgs e) {
-        Dash();
+        if (state != State.Dead) {
+            Dash();
+        }
     }
     private void GameInput_Attack1Pressed(object sender, System.EventArgs e) {
         if (attackCooldown <= 0 && state != State.Dead) {
@@ -195,8 +200,11 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     // Update is called once per frame
     void Update() {
         switch (state) {
-            case State.Alive:
+            case State.Normal:
                 UpdateAlive();
+                break;
+            case State.Dashing:
+                UpdateDash();
                 break;
             case State.Dead:
                 UpdateDead();
@@ -205,7 +213,29 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     private void UpdateAlive() {
-        dashCooldown -= Time.deltaTime;
+        DecrementCooldowns();
+        ReorientPlayerRotationToPointer();
+        ReorientMovementVectorToCamera();
+    }
+
+    private void UpdateDead() {
+        movementVector = Vector3.zero;
+    }
+    private void UpdateDash() {
+        DecrementCooldowns();
+        ReorientPlayerRotationToPointer();
+    }
+
+    private void DecrementCooldowns() {
+        if (dashCooldown > 0)
+            dashCooldown -= Time.deltaTime;
+        if (dashTimer > 0) {
+            dashTimer -= Time.deltaTime;
+        }
+        else if (state == State.Dashing) {
+            state = State.Normal;
+        }
+
         if (hitPaused) {
             movementVector = Vector3.zero;
             return;
@@ -216,14 +246,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         if (attackComboTimer > 0) {
             attackComboTimer -= Time.deltaTime;
         }
-        ReorientPlayerRotationToPointer();
-        ReorientMovementVectorToCamera();
-    }
 
-    private void UpdateDead() {
-        movementVector = Vector3.zero;
     }
-
 
     void ReorientMovementVectorToCamera() {
         Vector3 inputVector = GameInput.Instance.GetMovementVector();
@@ -259,6 +283,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         if (dashCooldown > 0) {
             return;
         }
+        state = State.Dashing;
+        dashTimer = dashTime;
         dashCooldown = dashCooldownMax;
         AddVelocity(movementVector * dashDistance);
 
@@ -303,36 +329,47 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime) {
         Vector3 targetMovementVelocity = Vector3.zero;
-        if (Motor.GroundingStatus.IsStableOnGround) {
-            // Reorient velocity on slope
-            currentVelocity = Motor.GetDirectionTangentToSurface(currentVelocity, Motor.GroundingStatus.GroundNormal) * currentVelocity.magnitude;
-            // Calculate target velocity
-            Vector3 inputRight = Vector3.Cross(movementVector, Motor.CharacterUp);
-            Vector3 reorientedInput = Vector3.Cross(Motor.GroundingStatus.GroundNormal, inputRight).normalized * movementVector.magnitude;
-            targetMovementVelocity = reorientedInput * playerSpeed;
-            // Smooth movement Velocity
-            currentVelocity = Vector3.Lerp(currentVelocity, targetMovementVelocity, 1 - Mathf.Exp(-moveSharpness * deltaTime));
-        }
-        else {
-            // Add move input
-            if (movementVector.sqrMagnitude > 0f) {
-                targetMovementVelocity = movementVector * playerSpeed;
-                // Prevent climbing on un-stable slopes with air movement
-                if (Motor.GroundingStatus.FoundAnyGround) {
-                    Vector3 perpenticularObstructionNormal = Vector3.Cross(Vector3.Cross(Motor.CharacterUp, Motor.GroundingStatus.GroundNormal), Motor.CharacterUp).normalized;
-                    targetMovementVelocity = Vector3.ProjectOnPlane(targetMovementVelocity, perpenticularObstructionNormal);
-                }
-                Vector3 velocityDiff = Vector3.ProjectOnPlane(targetMovementVelocity - currentVelocity, gravityVector);
-                currentVelocity += playerSpeed * deltaTime * velocityDiff;
+        if (state == State.Normal) {
+            if (Motor.GroundingStatus.IsStableOnGround) {
+                // Reorient velocity on slope
+                currentVelocity = Motor.GetDirectionTangentToSurface(currentVelocity, Motor.GroundingStatus.GroundNormal) * currentVelocity.magnitude;
+                // Calculate target velocity
+                Vector3 inputRight = Vector3.Cross(movementVector, Motor.CharacterUp);
+                Vector3 reorientedInput = Vector3.Cross(Motor.GroundingStatus.GroundNormal, inputRight).normalized * movementVector.magnitude;
+                targetMovementVelocity = reorientedInput * playerSpeed;
+                // Smooth movement Velocity
+                currentVelocity = Vector3.Lerp(currentVelocity, targetMovementVelocity, 1 - Mathf.Exp(-moveSharpness * deltaTime));
             }
-            // Gravity
-            currentVelocity += gravityVector * deltaTime;
-            // Drag
-            currentVelocity *= (1f / (1f + (drag * deltaTime)));
+            else {
+                // Add move input
+                if (movementVector.sqrMagnitude > 0f) {
+                    targetMovementVelocity = movementVector * playerSpeed;
+                    // Prevent climbing on un-stable slopes with air movement
+                    if (Motor.GroundingStatus.FoundAnyGround) {
+                        Vector3 perpenticularObstructionNormal = Vector3.Cross(Vector3.Cross(Motor.CharacterUp, Motor.GroundingStatus.GroundNormal), Motor.CharacterUp).normalized;
+                        targetMovementVelocity = Vector3.ProjectOnPlane(targetMovementVelocity, perpenticularObstructionNormal);
+                    }
+                    Vector3 velocityDiff = Vector3.ProjectOnPlane(targetMovementVelocity - currentVelocity, gravityVector);
+                    currentVelocity += playerSpeed * deltaTime * velocityDiff;
+                }
+                // Gravity
+                currentVelocity += gravityVector * deltaTime;
+                // Drag
+                currentVelocity *= (1f / (1f + (drag * deltaTime)));
+            }
+            if (addVelocity.sqrMagnitude > 0f) {
+                currentVelocity += addVelocity;
+                addVelocity = Vector3.zero;
+            }
         }
-        if (addVelocity.sqrMagnitude > 0f) {
-            currentVelocity += addVelocity;
-            addVelocity = Vector3.zero;
+        else if (state == State.Dashing) {
+
+            currentVelocity *= (1f / (1f + (drag * deltaTime)));
+            if (addVelocity.sqrMagnitude > 0f) {
+                currentVelocity += addVelocity;
+                addVelocity = Vector3.zero;
+            }
+
         }
     }
 
@@ -390,7 +427,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     public bool IsAlive() {
-        return state == State.Alive;
+        return state == State.Normal;
     }
 
 

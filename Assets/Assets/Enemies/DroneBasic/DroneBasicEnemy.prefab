@@ -501,6 +501,7 @@ MonoBehaviour:
   attackRange: 10
   panickRadius: 5
   attackPoint: {fileID: 2395010034888736861}
+  attackWarmUp: 1
   attackComboListSO: {fileID: 11400000, guid: 81b409ad375976f45aa36e6943bce33d, type: 2}
   speed: 5
   turnSharpness: 5
@@ -584,7 +585,17 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 2384829426749464789}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 63d01f53d83f14d4baadc8f5ab8b2869,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 112104463286895896}
   m_SourcePrefab: {fileID: 100100000, guid: 63d01f53d83f14d4baadc8f5ab8b2869, type: 3}
+--- !u!23 &4646404105803516875 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 63d01f53d83f14d4baadc8f5ab8b2869,
+    type: 3}
+  m_PrefabInstance: {fileID: 6321578656291837775}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5778253793997762724 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 63d01f53d83f14d4baadc8f5ab8b2869,
@@ -612,3 +623,18 @@ MonoBehaviour:
   baseEnemy: {fileID: 8488115048427910430}
   flashSpeed: 3
   flashColor: {r: 8, g: 8, b: 8, a: 0}
+--- !u!114 &112104463286895896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6592051160049936926}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ffa9911fe2333db4196dec4abebb4a4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  droneScript: {fileID: 8488115048427910430}
+  meshRenderer: {fileID: 4646404105803516875}
+  blinkingFrequency: 5

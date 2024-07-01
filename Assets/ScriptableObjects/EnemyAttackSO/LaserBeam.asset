@@ -15,7 +15,6 @@ MonoBehaviour:
   attackPrefab: {fileID: 7633622046484431565, guid: 1a8895e841986bc4ab86e037a0b07756,
     type: 3}
   attackSpawnVFX: {fileID: 0}
-  attackSprite: {fileID: 0}
   attackName: Laser Beam
   attackDuration: 0.5
   attackCooldown: 2
