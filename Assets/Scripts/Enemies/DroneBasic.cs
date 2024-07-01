@@ -71,7 +71,6 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
     private void Idle() {
         if (Vector3.SqrMagnitude(transform.position - Player.Instance.transform.position) < idleRange * idleRange && Player.Instance.IsAlive()) {
             state = State.Attack;
-            attackTimer = attackComboListSO.attackCombos[0].attacks[0].attackCooldown;
             return;
         }
         movementVector = Vector3.zero;

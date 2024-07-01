@@ -498,8 +498,8 @@ MonoBehaviour:
   maxHealth: 50
   idleRange: 15
   deaggroRange: 20
-  attackRange: 10
-  panickRadius: 5
+  attackRange: 7.5
+  panickRadius: 4
   attackPoint: {fileID: 2395010034888736861}
   attackWarmUp: 1
   attackComboListSO: {fileID: 11400000, guid: 81b409ad375976f45aa36e6943bce33d, type: 2}
