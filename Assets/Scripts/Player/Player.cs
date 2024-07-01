@@ -24,6 +24,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     public event EventHandler OnDeath;
     public event EventHandler HitPauseStart;
     public event EventHandler HitPauseEnd;
+    public event EventHandler DashStart;
+    public event EventHandler DashEnd;
 
     //Health
     [Header("Health")]
@@ -227,15 +229,18 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     private void DecrementCooldowns() {
+        //Handle dash cooldown and dash state switching
         if (dashCooldown > 0)
             dashCooldown -= Time.deltaTime;
         if (dashTimer > 0) {
             dashTimer -= Time.deltaTime;
         }
+        //If dash timer has run out and we are in dashing state then go to idle state and end dash
         else if (state == State.Dashing) {
+            DashEnd?.Invoke(this, EventArgs.Empty);
             state = State.Normal;
         }
-
+        //Handle hitPause, do not decrement attack cooldowns if hit paused
         if (hitPaused) {
             movementVector = Vector3.zero;
             return;
@@ -283,6 +288,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         if (dashCooldown > 0) {
             return;
         }
+        DashStart?.Invoke(this, EventArgs.Empty);
         state = State.Dashing;
         dashTimer = dashTime;
         dashCooldown = dashCooldownMax;
@@ -425,7 +431,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     public HittableType GetHittableType() {
         return HittableType.Player;
     }
-
+    #endregion
     public bool IsAlive() {
         return state == State.Normal;
     }
@@ -434,5 +440,10 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     public float GetNormalizedDashCooldown() {
         return dashCooldown / dashCooldownMax;
     }
-    #endregion
+
+    public float GetDashTime() {
+        return dashTime;
+    }
+
+
 }
