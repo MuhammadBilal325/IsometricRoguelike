@@ -132,6 +132,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Debug",
+            "id": "58d9a813-0782-405e-b5dc-ef0a2502613f",
+            "actions": [
+                {
+                    "name": "PrintArr",
+                    "type": "Button",
+                    "id": "e9f4d0ac-e975-4af9-93d8-b565a8db2ea2",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "629155d0-910a-49ac-bb37-4938853172c1",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "PrintArr",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []

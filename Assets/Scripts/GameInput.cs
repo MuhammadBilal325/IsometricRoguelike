@@ -9,6 +9,7 @@ public class GameInput : MonoBehaviour {
     public event EventHandler Attack1Pressed;
     public event EventHandler Attack2Pressed;
     public event EventHandler DashPressed;
+    public event EventHandler DebugPressed;
     PlayerInputActions playerInputActions;
 
     private void Awake() {
@@ -20,11 +21,17 @@ public class GameInput : MonoBehaviour {
         }
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
+        playerInputActions.Debug.Enable();
     }
     void Start() {
         playerInputActions.Player.Attack_1.performed += Attack_1_performed;
         playerInputActions.Player.Attack_2.performed += Attack_2_performed;
         playerInputActions.Player.Dash.performed += Dash_performed;
+        playerInputActions.Debug.PrintArr.performed += Debug_performed;
+    }
+
+    private void Debug_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        DebugPressed?.Invoke(this, EventArgs.Empty);
     }
 
     private void Dash_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
