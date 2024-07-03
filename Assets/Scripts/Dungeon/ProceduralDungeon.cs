@@ -40,7 +40,10 @@ public class ProceduralDungeon : MonoBehaviour {
         }
     }
     [SerializeField] private GameObject[] floors;
-    [SerializeField] private GameObject rectanglePrefab;
+    [SerializeField] private GameObject[] walls1x1;
+    [SerializeField] private GameObject[] walls1x2;
+    [SerializeField] private GameObject[] wallsCorners;
+    [SerializeField] private GameObject colliderPrefab;
     [SerializeField] private int arrayX;
     [SerializeField] private int arrayY;
     [SerializeField, Range(0, 1)] private float roomChance;
@@ -61,7 +64,9 @@ public class ProceduralDungeon : MonoBehaviour {
         Generate();
         MakeMap();
         GenerateFloorCollider();
-        GenerateEdgeColliders();
+        GenerateEdges();
+        GenerateBorderColliders();
+        MakeWalls();
         PrintArray();
     }
 
@@ -87,6 +92,7 @@ public class ProceduralDungeon : MonoBehaviour {
             }
         }
         ConnectRooms();
+        PatchHoles();
         AddWalls();
         hasGenerated = true;
     }
@@ -97,6 +103,18 @@ public class ProceduralDungeon : MonoBehaviour {
                 if (originX + i < arrayX && originY + j < arrayY) {
                     array[originX + i, originY + j] = TileType.Floor;
 
+                }
+            }
+        }
+    }
+
+
+    //This is such an ugly workaround , but it works for now
+    private void PatchHoles() {
+        for (int i = 1; i < arrayX - 1; i++) {
+            for (int j = 1; j < arrayY - 1; j++) {
+                if (array[i, j] == TileType.Empty && IsSolid(i - 1, j) && IsSolid(i + 1, j) && IsSolid(i, j - 1) && IsSolid(i, j + 1)) {
+                    array[i, j] = TileType.Floor;
                 }
             }
         }
@@ -169,17 +187,35 @@ public class ProceduralDungeon : MonoBehaviour {
         Vector2Int current = start;
         while (current != end) {
             if (current.x != end.x) {
-                current.x += (int)Mathf.Sign(end.x - current.x);
+                int direction = (int)Mathf.Sign(end.x - current.x);
+                current.x += direction;
+                CreateWideCorridor(current, direction, true);
             }
             else if (current.y != end.y) {
-                current.y += (int)Mathf.Sign(end.y - current.y);
+                int direction = (int)Mathf.Sign(end.y - current.y);
+                current.y += direction;
+                CreateWideCorridor(current, direction, false);
             }
-            if (current.x >= 0 && current.x < arrayX && current.y >= 0 && current.y < arrayY
-                && array[current.x, current.y] == TileType.Empty) {
-                array[current.x, current.y] = TileType.Corridor;
-            }
-
         }
+    }
+
+    private void CreateWideCorridor(Vector2Int current, int direction, bool isHorizontal) {
+        if (isHorizontal) {
+            SetCorridorTile(current.x, current.y);
+            SetCorridorTile(current.x, current.y - 1); // Ensure the corridor is 2 cells wide to the left
+        }
+        else {
+            SetCorridorTile(current.x, current.y);
+            SetCorridorTile(current.x - 1, current.y); // Ensure the corridor is 2 cells wide downwards
+        }
+    }
+
+    private bool SetCorridorTile(int x, int y) {
+        if (x >= 0 && x < arrayX && y >= 0 && y < arrayY && array[x, y] == TileType.Empty) {
+            array[x, y] = TileType.Corridor;
+            return true;
+        }
+        return false;
     }
 
     private void MakeMap() {
@@ -357,7 +393,7 @@ public class ProceduralDungeon : MonoBehaviour {
     private bool IsSolid(int x, int y) {
         return (array[x, y] == TileType.Floor || array[x, y] == TileType.Origin || array[x, y] == TileType.Corridor);
     }
-    private void GenerateEdgeColliders() {
+    private void GenerateEdges() {
         Vector3 edgeStart = Vector3.zero;
         Vector3 edgeEnd = Vector3.zero;
         //Add horizontal borders
@@ -396,6 +432,12 @@ public class ProceduralDungeon : MonoBehaviour {
                 }
             }
         }
+
+        //Edge case checking: Check if there are any walls surrounded by tiles
+
+    }
+
+    private void GenerateBorderColliders() {
         //Add four colliders for the outer walls
         Vector3 topLeft = new Vector3(0, 0, 0);
         Vector3 bottomLeft = new Vector3(arrayX * cellSize, 0, 0);
@@ -421,7 +463,7 @@ public class ProceduralDungeon : MonoBehaviour {
     public void AddRectangle(Vector3 position1, Vector3 position2, float yScale, GameObject rectangleParent, bool isHorizontal) {
 
         // Create the rectangle (using a Quad or Cube as the base)
-        GameObject rectangle = Instantiate(rectanglePrefab, rectangleParent.transform);
+        GameObject rectangle = Instantiate(colliderPrefab, rectangleParent.transform);
 
         // Calculate the center position between position1 and position2
         Vector3 centerPosition = (position1 + position2) / 2;
@@ -434,7 +476,7 @@ public class ProceduralDungeon : MonoBehaviour {
         float distance = distanceVector.magnitude;
         distance += cellSize;
         // Calculate the scale
-        Vector3 scale = new Vector3(distance, yScale, rectanglePrefab.transform.localScale.z); // Assuming we are using a Quad with a depth of 1
+        Vector3 scale = new Vector3(distance, yScale, cellSize); // Assuming we are using a Quad with a depth of 1
 
         // Apply the scale to the rectangle
         rectangle.transform.localScale = scale;
@@ -442,6 +484,54 @@ public class ProceduralDungeon : MonoBehaviour {
         if (isHorizontal)
             rectangle.transform.Rotate(Vector3.up, 90);
     }
+
+    private void MakeWalls() {
+        //
+        GameObject wallParent = new GameObject("Walls");
+        wallParent.transform.SetParent(this.transform);
+        //Make walls
+        bool[,] visited = new bool[arrayX, arrayY];
+        for (int i = 0; i < arrayX; i++) {
+            for (int j = 0; j < arrayY; j++) {
+                if (array[i, j] == TileType.Wall) {
+                    if (!visited[i, j]) {
+                        int wallSize = 1;
+                        if (i + 1 < arrayX && array[i + 1, j] == TileType.Wall) {
+                            wallSize++;
+                        }
+                        if (j + 1 < arrayY && array[i, j + 1] == TileType.Wall) {
+                            wallSize++;
+                        }
+                        if (i + 1 < arrayX && j + 1 < arrayY && array[i + 1, j + 1] == TileType.Wall) {
+                            wallSize++;
+                        }
+                        if (wallSize == 1) {
+                            GameObject wall = Instantiate(walls1x1[Random.Range(0, walls1x1.Length)], new Vector3(i * cellSize, 0, j * cellSize), Quaternion.identity);
+                            wall.transform.SetParent(wallParent.transform);
+                            visited[i, j] = true;
+                        }
+                        else if (wallSize == 2) {
+                            if (i + 1 < arrayX && array[i + 1, j] == TileType.Wall) {
+                                GameObject wall = Instantiate(walls1x2[Random.Range(0, walls1x2.Length)], new Vector3(((i + i + 1) / 2f) * cellSize, 0, j * cellSize), Quaternion.identity);
+                                wall.transform.Rotate(Vector3.up, 90);
+                                wall.transform.SetParent(wallParent.transform);
+                                visited[i, j] = true;
+                                visited[i + 1, j] = true;
+                            }
+                            else {
+                                GameObject wall = Instantiate(walls1x2[Random.Range(0, walls1x2.Length)], new Vector3(i * cellSize, 0, ((j + j + 1) / 2f) * cellSize), Quaternion.identity);
+                                wall.transform.SetParent(wallParent.transform);
+                                visited[i, j] = true;
+                                visited[i, j + 1] = true;
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
     private void Update() {
         foreach (Border border in Borders) {
