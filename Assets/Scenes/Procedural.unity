@@ -253,15 +253,100 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\nEmpty Empty Empty Empty Empty Empty Empty Empty Empty Empty \r\nEmpty
-    Empty Empty Empty Empty Empty Empty Empty Empty Empty \r\nEmpty Empty Empty Empty
-    Empty Empty Empty Empty Empty Empty \r\nEmpty Empty Origin Empty Empty Empty
-    Empty Empty Empty Empty \r\nEmpty Empty Empty Origin Empty Empty Empty Empty
-    Empty Empty \r\nEmpty Empty Empty Empty Empty Origin Origin Empty Empty Empty
-    \r\nOrigin Empty Empty Empty Empty Empty Empty Empty Empty Empty \r\nEmpty Empty
-    Empty Origin Empty Empty Empty Empty Origin Empty \r\nEmpty Empty Empty Empty
-    Empty Empty Origin Origin Empty Empty \r\nEmpty Empty Empty Empty Origin Empty
-    Empty Empty Empty Empty \r\n"
+  m_text: "<mspace=10px>\r\n\u25CB \u25A1 \u25A1 \u25A0 - - - - - - - - - - - - -
+    - - - - - - - \u25A0 \u25A0 I I I I I I \u25CB \u25A1 \u25A1 \u25A1 \u25A1 \u25A1
+    \u25A0 - \r\n\u25A1 \u25A1 \u25A1 \u25A0 - - - - - - - - - - - - - - - - - -
+    - - \u25A0 I \u25CB \u25A1 \u25A0 \u25A0 \u25A0 \u25A0 \u25A1 \u25A1 \u25A1 \u25A1
+    \u25A1 \u25A1 \u25A0 - \r\n\u25A1 \u25A1 \u25A1 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0
+    - - - - - - - - - - - - - - - - \u25A0 I \u25A1 \u25A1 \u25A0 - - \u25A0 \u25A1
+    \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 - \r\nI I I I \u25CB \u25A1 \u25A1
+    \u25A0 - - - - - - - - - - - - - - - - \u25A0 I \u25A1 \u25A1 \u25A0 - - \u25A0
+    \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 - \r\n\u25A0 \u25A0 \u25A0 \u25A0
+    \u25A1 \u25A1 \u25A1 \u25A0 - - - - - - - - - - - - - - - - \u25A0 I \u25A1 \u25A1
+    \u25A0 - - - - - - - - - - - \r\n- - - \u25A0 \u25A1 \u25A1 \u25A1 \u25A0 - -
+    - - - - - - - - - - - - - - \u25A0 I \u25A1 \u25A1 \u25A0 - - - - - - - - - -
+    - \r\n- - - \u25A0 \u25A1 \u25A1 \u25A1 \u25A0 - - - - - - - - - - - - \u25A0
+    \u25A0 \u25A0 \u25A0 \u25A0 I \u25A1 \u25A1 \u25A0 \u25A0 \u25A0 \u25A0 - - -
+    - - - - - \r\n- - - \u25A0 I \u25A0 \u25A0 \u25A0 - - - - - - - - - - - - \u25A0
+    I I I I \u25CB \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 - - - - - - - - \r\n-
+    - - \u25A0 I \u25A0 - - - - - - - - - - - - - - \u25A0 I \u25A0 \u25A0 \u25A0
+    \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 - - - - - - - - \r\n- - - \u25A0
+    I \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0
+    - - - \u25A0 \u25A0 I \u25A0 \u25A0 \u25A0 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1
+    \u25A1 \u25A0 - - - - - - - - \r\n- - - \u25A0 I I I I I I I \u25CB \u25A1 \u25A1
+    \u25A1 \u25A0 - - - \u25A0 I \u25CB \u25A1 \u25A1 \u25A0 \u25A1 \u25A1 \u25A1
+    \u25A1 \u25A1 \u25A1 \u25A0 - - - - - - - - \r\n- - - \u25A0 \u25A0 \u25A0 \u25A0
+    \u25A0 \u25A0 \u25A0 \u25A0 \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 - - - \u25A0 I
+    \u25A1 \u25A1 \u25A1 \u25A0 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A0
+    - - - - - - - - \r\n- - - - - - - - - - \u25A0 \u25A1 \u25A1 \u25A1 \u25A1 \u25A0
+    - - - \u25A0 I \u25A1 \u25A1 \u25A1 \u25A0 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1
+    \u25A1 \u25A0 - - - - - - - - \r\n- - - - - - - - - - \u25A0 \u25A1 \u25A1 \u25A1
+    \u25A1 \u25A0 - - - \u25A0 I \u25A1 \u25A1 \u25A1 \u25A0 \u25A0 \u25A0 \u25A0
+    \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0
+    \u25A0 \r\n- - - - - - \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A1 \u25A1 \u25A1
+    \u25A1 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 I \u25A0 \u25A0 \u25A0 \u25A0 \u25A0
+    - - - - - - \u25A0 I \u25CB \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 \r\n- - - - -
+    - \u25A0 \u25CB \u25A1 \u25A1 I I \u25A0 \u25A0 \u25A0 I I I I I \u25CB \u25A1
+    \u25A1 \u25A1 \u25A1 \u25A0 - - - - - - \u25A0 I \u25A1 \u25A1 \u25A1 \u25A1
+    \u25A1 \u25A0 \r\n- - - - - - \u25A0 \u25A1 \u25A1 \u25A1 \u25A0 \u25A0 \u25A0
+    - \u25A0 I \u25A0 \u25A0 \u25A0 \u25A0 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A0
+    - - - - - - \u25A0 I \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 \r\n- - - - -
+    - \u25A0 \u25A1 \u25A1 \u25A1 \u25A0 - - - \u25A0 I \u25A0 - - \u25A0 \u25A1
+    \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 - - - - - - \u25A0 I \u25A0 \u25A0 \u25A0
+    \u25A0 \u25A0 \u25A0 \r\n- - - - - - \u25A0 \u25A1 \u25A1 \u25A1 \u25A0 - - -
+    \u25A0 I \u25A0 - - \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 - - - -
+    - - \u25A0 I \u25A0 - - - - - \r\n- - - - - - \u25A0 I \u25A0 \u25A0 \u25A0 -
+    - - \u25A0 I \u25A0 - - - - - - - - - - - - - - - \u25A0 I \u25A0 - - - - - \r\n-
+    - - - - - \u25A0 I \u25A0 - - - - - \u25A0 I \u25A0 - - - - - - - - - - - - -
+    - - \u25A0 I \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \r\n- - - - - - \u25A0
+    I \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 - \u25A0 I \u25A0 \u25A0 \u25A0 \u25A0 \u25A0
+    \u25A0 - - - - - - - - - - \u25A0 \u25CB \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A0
+    \r\n- - - - - - \u25A0 I I \u25CB \u25A1 \u25A1 \u25A0 - \u25A0 \u25CB \u25A1
+    \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 - - - - - - - - - - \u25A0 \u25A1 \u25A1 \u25A1
+    \u25A1 \u25A1 \u25A1 \u25A0 \r\n- - - - - - \u25A0 \u25A0 \u25A0 \u25A1 \u25A1
+    \u25A1 \u25A0 - \u25A0 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 - - -
+    - - - - - - - \u25A0 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 \r\n- -
+    - - - - - - \u25A0 \u25A1 \u25A1 \u25A1 \u25A0 - \u25A0 \u25A1 \u25A1 \u25A1
+    \u25A1 \u25A1 \u25A1 \u25A0 - - - - - - - - - - \u25A0 \u25A1 \u25A1 \u25A1 \u25A1
+    \u25A1 \u25A1 \u25A0 \r\n- - - - - - - - \u25A0 \u25A1 \u25A1 \u25A1 \u25A0 -
+    \u25A0 I \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 - - - - - - - - - - \u25A0
+    \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25CB \u25A1 \r\n- \u25A0 \u25A0 \u25A0 \u25A0
+    \u25A0 \u25A0 - \u25A0 I \u25A0 \u25A0 \u25A0 - \u25A0 I \u25A0 - - - - - - -
+    - - - - - - - - - - - - - \u25A0 \u25A1 \u25A1 \r\n- \u25A0 \u25CB \u25A1 \u25A1
+    I \u25A0 - \u25A0 I \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 I \u25A0 \u25A0 \u25A0
+    \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 - - - - - - - - - - - - - \u25A0 \u25A1 \u25A1
+    \r\n- \u25A0 \u25A1 \u25A1 \u25A1 I \u25A0 - \u25A0 \u25CB \u25A1 \u25A1 I I
+    I \u25CB \u25A1 I \u25CB \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 - - - - - - - - -
+    - - - - \u25A0 \u25A1 \u25A1 \r\n- \u25A0 \u25A1 \u25A1 \u25A1 I \u25A0 - \u25A0
+    \u25A1 \u25A1 \u25A1 \u25A0 \u25A0 \u25A0 \u25A1 \u25A1 \u25CB \u25A1 \u25A1
+    \u25A1 \u25A1 \u25A1 \u25A0 - - - \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0
+    \u25A0 \u25A0 \u25A0 \u25A0 \u25A1 \u25A1 \r\n- \u25A0 \u25A0 \u25A0 \u25A0 I
+    \u25A0 - \u25A0 \u25A1 \u25A1 \u25A1 \u25A0 - \u25A0 \u25A1 \u25A1 \u25A1 \u25A1
+    \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 - - - \u25A0 I I I \u25CB \u25A1 \u25A1 \u25A1
+    \u25A1 \u25A1 \u25A0 \u25A0 I \r\n- - - - \u25A0 I \u25A0 \u25A0 \u25A0 \u25A1
+    \u25A1 \u25A1 \u25A0 - \u25A0 \u25A0 \u25A0 I \u25A1 \u25A1 \u25A1 \u25A1 \u25A1
+    \u25A0 - - - \u25A0 I \u25A0 \u25A0 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1
+    \u25A0 \u25A0 I \r\n- - \u25A0 \u25A0 \u25A0 \u25CB \u25A1 I I \u25A1 \u25A1
+    \u25A1 \u25A0 - - - \u25A0 I \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 - - -
+    \u25A0 I \u25A0 \u25A0 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 \u25A0
+    I \r\n- - \u25A0 \u25CB \u25A1 \u25A1 \u25A1 \u25A0 \u25A0 \u25A1 \u25A1 \u25A1
+    \u25A0 - - - \u25A0 I I \u25CB \u25A1 \u25A0 \u25A0 \u25A0 - - - \u25A0 I \u25A0
+    \u25A0 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 I I \u25CB \r\n- - \u25A0 \u25A1
+    \u25A1 \u25A1 \u25A1 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 - - - \u25A0 \u25A0
+    \u25A0 \u25A1 \u25A1 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 I \u25A0
+    \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A1 \r\n- -
+    \u25A0 \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 - - - - - - - - - - \u25A0 \u25A1 \u25A1
+    I I I I I I I \u25CB \u25A1 \u25A1 \u25A0 - - - - - - \u25A0 \u25A0 \r\n- - \u25A0
+    \u25A1 \u25A1 I \u25A0 \u25A0 - - - - - - - - - - \u25A0 \u25A1 \u25A1 I \u25A0
+    \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A1 \u25A1 \u25A1 \u25A0 - - - - - - -
+    - \r\n- - \u25A0 \u25A0 \u25A0 I \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0
+    \u25A0 \u25A0 \u25A0 \u25A0 - \u25A0 I \u25A0 I \u25A0 \u25A0 \u25A0 \u25A0 \u25A0
+    \u25A0 \u25A1 \u25A1 \u25A1 \u25A0 - - - - - - - - \r\n- - - - \u25A0 I I I I
+    I I \u25CB \u25A1 \u25A1 \u25A1 \u25A1 \u25A0 - \u25A0 I I \u25CB \u25A1 \u25A1
+    \u25A1 \u25A1 \u25A1 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 - - - - - - - - \r\n-
+    - - - \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A0 \u25A1 \u25A1 \u25A1 \u25A1
+    \u25A1 \u25A0 - \u25A0 \u25A0 \u25A0 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1 \u25A1
+    \u25A0 - - - - - - - - - - - - \r\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -384,8 +469,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floors:
   - {fileID: 399159150715980019, guid: 019e7a8328da2ab41b053010693dbf07, type: 3}
-  arrayX: 40
-  arrayY: 40
+  rectanglePrefab: {fileID: 5057094975481832525, guid: 13080ac90a036bf4ab0e616842ea2380,
+    type: 3}
+  arrayX: 20
+  arrayY: 20
   roomChance: 0.018
   maxRoomXSize: 6
   maxRoomYSize: 6
@@ -527,7 +614,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1642974956
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using TMPro;
+using Unity.VisualScripting.Antlr3.Runtime.Tree;
+using UnityEditor.Build;
 using UnityEngine;
 
 public class ProceduralDungeon : MonoBehaviour {
@@ -11,11 +13,34 @@ public class ProceduralDungeon : MonoBehaviour {
         Empty,
         Origin,
         Floor,
-        Padding,
         Corridor,
+        Wall,
+    }
+    private class Edge {
+        public Vector2Int Start;
+        public Vector2Int End;
+        public float Weight;
+
+        public Edge(Vector2Int start, Vector2Int end, float weight = 0) {
+            Start = start;
+            End = end;
+            Weight = weight;
+        }
     }
 
+    private class Border {
+        public Vector3 Start;
+        public Vector3 End;
+        public bool isHorizontal;
+
+        public Border(Vector3 start, Vector3 end, bool isHorizontal) {
+            Start = start;
+            End = end;
+            this.isHorizontal = isHorizontal;
+        }
+    }
     [SerializeField] private GameObject[] floors;
+    [SerializeField] private GameObject rectanglePrefab;
     [SerializeField] private int arrayX;
     [SerializeField] private int arrayY;
     [SerializeField, Range(0, 1)] private float roomChance;
@@ -28,6 +53,7 @@ public class ProceduralDungeon : MonoBehaviour {
     [SerializeField] private TextMeshProUGUI DebugText;
 
     private List<Vector2Int> roomOrigins = new List<Vector2Int>();
+    private List<Border> Borders = new List<Border>();
     void Start() {
         Random.InitState(seed);
         array = new TileType[arrayX, arrayY];
@@ -61,6 +87,7 @@ public class ProceduralDungeon : MonoBehaviour {
             }
         }
         ConnectRooms();
+        AddWalls();
         hasGenerated = true;
     }
 
@@ -69,49 +96,42 @@ public class ProceduralDungeon : MonoBehaviour {
             for (int j = 0; j <= roomWidthY; j++) {
                 if (originX + i < arrayX && originY + j < arrayY) {
                     array[originX + i, originY + j] = TileType.Floor;
-                    //Add padding on edges
-                    //If we are on bottom row
-                    if (i == roomWidthX && originX + i + 1 < arrayX) {
-                        array[originX + i + 1, originY + j] = TileType.Padding;
-                    }
-                    ////If we are on top row
-                    if (i == 0 && originX + i - 1 >= 0) {
-                        array[originX + i - 1, originY + j] = TileType.Padding;
-                    }
-                    ////If we are on right side
-                    if (j == roomWidthY && originY + j + 1 < arrayY) {
-                        array[originX + i, originY + j + 1] = TileType.Padding;
-                    }
-                    ////if we are on left side
-                    if (j == 0 && originY + j - 1 >= 0) {
-                        array[originX + i, originY + j - 1] = TileType.Padding;
-                    }
-                    ////If we are on a corner
-                    //if (i == roomWidthX && j == roomWidthY && originX + i + 1 < arrayX && originY + j + 1 < arrayY) {
-                    //    array[originX + i + 1, originY + j + 1] = TileType.Padding;
-                    //}
-                    //if (i == 0 && j == 0 && originX + i - 1 >= 0 && originY + j - 1 >= 0) {
-                    //    array[originX + i - 1, originY + j - 1] = TileType.Padding;
-                    //}
-                    //if (i == 0 && j == roomWidthY && originX + i - 1 >= 0 && originY + j + 1 < arrayY) {
-                    //    array[originX + i - 1, originY + j + 1] = TileType.Padding;
-                    //}
-                    //if (i == roomWidthX && j == 0 && originX + i + 1 < arrayX && originY + j - 1 >= 0) {
-                    //    array[originX + i + 1, originY + j - 1] = TileType.Padding;
-                    //}
+
                 }
             }
         }
     }
-    private class Edge {
-        public Vector2Int Start;
-        public Vector2Int End;
-        public float Weight;
-
-        public Edge(Vector2Int start, Vector2Int end, float weight) {
-            Start = start;
-            End = end;
-            Weight = weight;
+    private void AddWalls() {
+        for (int i = 0; i < arrayX; i++) {
+            for (int j = 0; j < arrayY; j++) {
+                if (array[i, j] == TileType.Floor || array[i, j] == TileType.Origin || array[i, j] == TileType.Corridor) {
+                    if (i > 0 && array[i - 1, j] == TileType.Empty) {
+                        array[i - 1, j] = TileType.Wall;
+                    }
+                    if (i < arrayX - 1 && array[i + 1, j] == TileType.Empty) {
+                        array[i + 1, j] = TileType.Wall;
+                    }
+                    if (j > 0 && array[i, j - 1] == TileType.Empty) {
+                        array[i, j - 1] = TileType.Wall;
+                    }
+                    if (j < arrayY - 1 && array[i, j + 1] == TileType.Empty) {
+                        array[i, j + 1] = TileType.Wall;
+                    }
+                    ////  Handle corner cases
+                    if (i > 0 && j > 0 && array[i - 1, j - 1] == TileType.Empty) {
+                        array[i - 1, j - 1] = TileType.Wall;
+                    }
+                    if (i < arrayX - 1 && j > 0 && array[i + 1, j - 1] == TileType.Empty) {
+                        array[i + 1, j - 1] = TileType.Wall;
+                    }
+                    if (i > 0 && j < arrayY - 1 && array[i - 1, j + 1] == TileType.Empty) {
+                        array[i - 1, j + 1] = TileType.Wall;
+                    }
+                    if (i < arrayX - 1 && j < arrayY - 1 && array[i + 1, j + 1] == TileType.Empty) {
+                        array[i + 1, j + 1] = TileType.Wall;
+                    }
+                }
+            }
         }
     }
     private void ConnectRooms() {
@@ -155,9 +175,7 @@ public class ProceduralDungeon : MonoBehaviour {
                 current.y += (int)Mathf.Sign(end.y - current.y);
             }
             if (current.x >= 0 && current.x < arrayX && current.y >= 0 && current.y < arrayY
-                && (array[current.x, current.y] == TileType.Empty
-                || array[current.x, current.y] == TileType.Padding
-                )) {
+                && array[current.x, current.y] == TileType.Empty) {
                 array[current.x, current.y] = TileType.Corridor;
             }
 
@@ -216,11 +234,11 @@ public class ProceduralDungeon : MonoBehaviour {
                     case TileType.Floor:
                         sb.Append('□');
                         break;
-                    case TileType.Padding:
-                        sb.Append('■');
-                        break;
                     case TileType.Corridor:
                         sb.Append('I');
+                        break;
+                    case TileType.Wall:
+                        sb.Append('■');
                         break;
                 }
                 sb.Append(' ');
@@ -241,9 +259,12 @@ public class ProceduralDungeon : MonoBehaviour {
         Mesh mesh = new Mesh();
 
         Vector3[] vertices = new Vector3[4];
-        vertices[0] = new Vector3(0, 0, 0);
-        vertices[1] = new Vector3(arrayX * cellSize, 0, 0);
-        vertices[2] = new Vector3(0, 0, arrayY * cellSize);
+        //topLeft -= new Vector3(cellSize, 0, cellSize);
+        //bottomLeft -= new Vector3(0, 0, cellSize);
+        //topRight -= new Vector3(cellSize, 0, 0);
+        vertices[0] = new Vector3(-cellSize, 0, -cellSize);
+        vertices[1] = new Vector3(arrayX * cellSize, 0, -cellSize);
+        vertices[2] = new Vector3(-cellSize, 0, arrayY * cellSize);
         vertices[3] = new Vector3(arrayX * cellSize, 0, arrayY * cellSize);
 
         int[] triangles = new int[]
@@ -259,10 +280,173 @@ public class ProceduralDungeon : MonoBehaviour {
         meshCollider.sharedMesh = mesh;
     }
 
-    private void GenerateEdgeColliders() {
+    private bool HorizontalWallSurroundCheck(int x, int y) {
+        if (x == 0 || x == arrayX - 1) {
+            return true;
+        }
+        //Check up and down
+        if (x > 0
+            && IsSolid(x - 1, y)) {
+            return true;
+        }
+        if (x + 1 < arrayX
+            && IsSolid(x + 1, y)) {
+            return true;
+        }
+
+
+        return CornerSurroundCheck(x, y);
     }
 
-    private void AddCollider(GameObject parent, Vector3 position, Vector3 size) {
+    private bool VerticalWallSurroundCheck(int x, int y) {
+        if (y == 0 || y == arrayY - 1) {
+            return true;
+        }
+        if (y > 0
+            && IsSolid(x, y - 1)) {
+            return true;
+        }
+        if (y + 1 < arrayY
+            && IsSolid(x, y + 1)
+            ) {
+            return true;
+        }
+        return CornerSurroundCheck(x, y);
+    }
+
+    private bool CornerSurroundCheck(int x, int y) {
+        //Case 1
+        // XW
+        // WW
+        if (x - 1 >= 0 && y - 1 >= 0 &&
+            IsSolid(x - 1, y - 1) &&
+            (array[x - 1, y] == TileType.Wall) &&
+            (array[x, y - 1] == TileType.Wall)) {
+            return true;
+        }
+        //Case 2
+        // WX
+        // WW
+        if (x - 1 >= 0 && y + 1 < arrayY &&
+            IsSolid(x - 1, y + 1) &&
+            (array[x - 1, y] == TileType.Wall) &&
+            (array[x, y + 1] == TileType.Wall)) {
+            return true;
+        }
+        //Case 3
+        // WW
+        // XW
+        if (x + 1 < arrayX && y - 1 >= 0 &&
+            IsSolid(x + 1, y - 1) &&
+            (array[x + 1, y] == TileType.Wall) &&
+            (array[x, y - 1] == TileType.Wall)) {
+            return true;
+        }
+        //Case 4
+        // WW
+        // WX
+        if (x + 1 < arrayX && y + 1 < arrayY &&
+            IsSolid(x + 1, y + 1) &&
+            (array[x + 1, y] == TileType.Wall) &&
+            (array[x, y + 1] == TileType.Wall)) {
+            return true;
+        }
+        return false;
+    }
+
+    private bool IsSolid(int x, int y) {
+        return (array[x, y] == TileType.Floor || array[x, y] == TileType.Origin || array[x, y] == TileType.Corridor);
+    }
+    private void GenerateEdgeColliders() {
+        Vector3 edgeStart = Vector3.zero;
+        Vector3 edgeEnd = Vector3.zero;
+        //Add horizontal borders
+        //Very simple implementation, we iterate through array until we find a wall that has a solid tile above or below,
+        //when we find one we check if there is another wall to its right, if there is we start a loop going to the right until we find a non wall tile or a non surrounded wall tile
+        //We then add a border from the start to the end of the wall
+
+        for (int i = 0; i < arrayX; i++) {
+            for (int j = 0; j < arrayY; j++) {
+                if (array[i, j] == TileType.Wall) {
+                    if (j < arrayY - 1 && array[i, j + 1] == TileType.Wall && HorizontalWallSurroundCheck(i, j)) {
+                        edgeStart = new Vector3(i * cellSize, 0, j * cellSize);
+                        while (j < arrayY && array[i, j] == TileType.Wall && HorizontalWallSurroundCheck(i, j)) {
+                            j++;
+                        }
+                        j--;
+                        edgeEnd = new Vector3(i * cellSize, 0, j * cellSize);
+                        Borders.Add(new Border(edgeStart, edgeEnd, true));
+                    }
+                }
+            }
+        }
+        //Add vertical borders
+        for (int j = 0; j < arrayY; j++) {
+            for (int i = 0; i < arrayX; i++) {
+                if (array[i, j] == TileType.Wall) {
+                    if (i < arrayX - 1 && array[i + 1, j] == TileType.Wall && VerticalWallSurroundCheck(i, j)) {
+                        edgeStart = new Vector3(i * cellSize, 0, j * cellSize);
+                        while (i < arrayX && array[i, j] == TileType.Wall && VerticalWallSurroundCheck(i, j)) {
+                            i++;
+                        }
+                        i--;
+                        edgeEnd = new Vector3(i * cellSize, 0, j * cellSize);
+                        Borders.Add(new Border(edgeStart, edgeEnd, false));
+                    }
+                }
+            }
+        }
+        //Add four colliders for the outer walls
+        Vector3 topLeft = new Vector3(0, 0, 0);
+        Vector3 bottomLeft = new Vector3(arrayX * cellSize, 0, 0);
+        Vector3 topRight = new Vector3(0, 0, arrayY * cellSize);
+        Vector3 bottomRight = new Vector3(arrayX * cellSize, 0, arrayY * cellSize);
+        topLeft -= new Vector3(cellSize, 0, cellSize);
+        bottomLeft -= new Vector3(0, 0, cellSize);
+        topRight -= new Vector3(cellSize, 0, 0);
+
+        Borders.Add(new Border(topLeft, topRight, true));
+        Borders.Add(new Border(topLeft, bottomLeft, false));
+        Borders.Add(new Border(topRight, bottomRight, false));
+        Borders.Add(new Border(bottomLeft, bottomRight, true));
+
+        // Create an empty GameObject to act as the parent
+        GameObject rectangleParent = new GameObject("Rectangle");
+        rectangleParent.transform.SetParent(this.transform);
+
+        foreach (Border border in Borders) {
+            AddRectangle(border.Start, border.End, 10f, rectangleParent, border.isHorizontal);
+        }
+    }
+    public void AddRectangle(Vector3 position1, Vector3 position2, float yScale, GameObject rectangleParent, bool isHorizontal) {
+
+        // Create the rectangle (using a Quad or Cube as the base)
+        GameObject rectangle = Instantiate(rectanglePrefab, rectangleParent.transform);
+
+        // Calculate the center position between position1 and position2
+        Vector3 centerPosition = (position1 + position2) / 2;
+
+        // Set the rectangle's position to the center
+        rectangle.transform.position = centerPosition;
+
+        // Calculate the distance between position1 and position2
+        Vector3 distanceVector = position2 - position1;
+        float distance = distanceVector.magnitude;
+        distance += cellSize;
+        // Calculate the scale
+        Vector3 scale = new Vector3(distance, yScale, rectanglePrefab.transform.localScale.z); // Assuming we are using a Quad with a depth of 1
+
+        // Apply the scale to the rectangle
+        rectangle.transform.localScale = scale;
+
+        if (isHorizontal)
+            rectangle.transform.Rotate(Vector3.up, 90);
+    }
+
+    private void Update() {
+        foreach (Border border in Borders) {
+            Debug.DrawLine(border.Start, border.End, Color.red);
+        }
     }
 
 }
