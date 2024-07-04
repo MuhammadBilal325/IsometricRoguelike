@@ -192,16 +192,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9079535007181679810, guid: c836d6c7a7c67644cad0a3e18b1e80d4,
-        type: 3}
-      propertyPath: drag
-      value: 1000
-      objectReference: {fileID: 0}
-    - target: {fileID: 9079535007181679810, guid: c836d6c7a7c67644cad0a3e18b1e80d4,
-        type: 3}
-      propertyPath: gravityVector.y
-      value: 0
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -253,7 +243,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dungeonRoomList: {fileID: 11400000, guid: d73d5791a21ea274f84e8c9874db7f9d, type: 2}
   seed: 0
-  maxRoomCount: 1000
+  maxRoomCount: 20
 --- !u!1 &1277702424
 GameObject:
   m_ObjectHideFlags: 0
