@@ -22,9 +22,7 @@ public class DungeonGenerator : MonoBehaviour {
         availableExitPoints.Add(transform);
         //Get The startPoint of the room
         int i = 0;
-        int tries = 0;
         do {
-            tries++;
             //Choose a random exit point to pop
             int randomExitPoint = Random.Range(0, availableExitPoints.Count);
             Transform exitPoint = availableExitPoints[randomExitPoint];
@@ -56,9 +54,6 @@ public class DungeonGenerator : MonoBehaviour {
                     availableExitPoints.Add(dungeonRoom.ExitPoint[j]);
                 }
                 i++;
-                //Set the material to a random color
-                dungeonRoom.SetMaterialColor(Random.ColorHSV());
-                tries = 0;
             }
             else {
                 Destroy(rooms[i].gameObject);
