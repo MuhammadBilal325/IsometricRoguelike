@@ -438,7 +438,10 @@ MonoBehaviour:
   walls1x2:
   - {fileID: 8701997154479991661, guid: 78d0bffdd7c1b5f4dbb9ea060bca2ac0, type: 3}
   wallsCorners:
-  - {fileID: 919132149155446097, guid: cfaf4e04059cabf4e95bb8b692ef5805, type: 3}
+  - {fileID: 7363352302233675398, guid: 292c6a79bc4183d49b30ada9f1e4aa28, type: 3}
+  - {fileID: 7433195564145086957, guid: 09620793dc89cfa43986d508e9755b79, type: 3}
+  - {fileID: 3706346091489088514, guid: b17c3846634c8c44aaeca4f3a141a96b, type: 3}
+  - {fileID: 9006892937817614501, guid: 9c194619ee3166a45b318549162b7c08, type: 3}
   colliderPrefab: {fileID: 5057094975481832525, guid: 13080ac90a036bf4ab0e616842ea2380,
     type: 3}
   arrayX: 40
