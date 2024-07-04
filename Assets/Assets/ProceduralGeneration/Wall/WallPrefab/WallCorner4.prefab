@@ -10,38 +10,48 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: f9765ae69c548884b95a8c99bd327679,
         type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: f9765ae69c548884b95a8c99bd327679,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: f9765ae69c548884b95a8c99bd327679,
+        type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.022778045
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f9765ae69c548884b95a8c99bd327679,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.5987212e-14
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f9765ae69c548884b95a8c99bd327679,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 8.66226
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f9765ae69c548884b95a8c99bd327679,
         type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7071068
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f9765ae69c548884b95a8c99bd327679,
         type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.000000015454313
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f9765ae69c548884b95a8c99bd327679,
         type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.70710677
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f9765ae69c548884b95a8c99bd327679,
         type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.000000015454312
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f9765ae69c548884b95a8c99bd327679,
         type: 3}

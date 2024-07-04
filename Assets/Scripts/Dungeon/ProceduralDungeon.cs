@@ -31,11 +31,16 @@ public class ProceduralDungeon : MonoBehaviour {
     private class Border {
         public Vector3 Start;
         public Vector3 End;
+        public Vector2Int arrayStartCoords;
+        public Vector2Int arrayEndCoords;
         public bool isHorizontal;
 
-        public Border(Vector3 start, Vector3 end, bool isHorizontal) {
+
+        public Border(Vector3 start, Vector3 end, Vector2Int arrayStart, Vector2Int arrayEnd, bool isHorizontal) {
             Start = start;
             End = end;
+            arrayStartCoords = new Vector2Int((int)arrayStart.x, (int)arrayStart.y);
+            arrayEndCoords = new Vector2Int((int)arrayEnd.x, (int)arrayEnd.y);
             this.isHorizontal = isHorizontal;
         }
     }
@@ -64,10 +69,10 @@ public class ProceduralDungeon : MonoBehaviour {
         Generate();
         MakeMap();
         GenerateFloorCollider();
-        GenerateEdges();
+        GenerateEdgesAndSetWallDirections();
         GenerateBorderColliders();
         MakeWalls();
-        PrintArray();
+        // PrintArray();
     }
 
 
@@ -393,9 +398,11 @@ public class ProceduralDungeon : MonoBehaviour {
     private bool IsSolid(int x, int y) {
         return (array[x, y] == TileType.Floor || array[x, y] == TileType.Origin || array[x, y] == TileType.Corridor);
     }
-    private void GenerateEdges() {
+    private void GenerateEdgesAndSetWallDirections() {
         Vector3 edgeStart = Vector3.zero;
         Vector3 edgeEnd = Vector3.zero;
+        Vector2Int edgeStartInts = Vector2Int.zero;
+        Vector2Int edgeEndInts = Vector2Int.zero;
         //Add horizontal borders
         //Very simple implementation, we iterate through array until we find a wall that has a solid tile above or below,
         //when we find one we check if there is another wall to its right, if there is we start a loop going to the right until we find a non wall tile or a non surrounded wall tile
@@ -406,12 +413,14 @@ public class ProceduralDungeon : MonoBehaviour {
                 if (array[i, j] == TileType.Wall) {
                     if (j < arrayY - 1 && array[i, j + 1] == TileType.Wall && HorizontalWallSurroundCheck(i, j)) {
                         edgeStart = new Vector3(i * cellSize, 0, j * cellSize);
+                        edgeStartInts = new Vector2Int(i, j);
                         while (j < arrayY && array[i, j] == TileType.Wall && HorizontalWallSurroundCheck(i, j)) {
                             j++;
                         }
                         j--;
                         edgeEnd = new Vector3(i * cellSize, 0, j * cellSize);
-                        Borders.Add(new Border(edgeStart, edgeEnd, true));
+                        edgeEndInts = new Vector2Int(i, j);
+                        Borders.Add(new Border(edgeStart, edgeEnd, edgeStartInts, edgeEndInts, true));
                     }
                 }
             }
@@ -422,12 +431,15 @@ public class ProceduralDungeon : MonoBehaviour {
                 if (array[i, j] == TileType.Wall) {
                     if (i < arrayX - 1 && array[i + 1, j] == TileType.Wall && VerticalWallSurroundCheck(i, j)) {
                         edgeStart = new Vector3(i * cellSize, 0, j * cellSize);
+                        edgeStartInts = new Vector2Int(i, j);
+
                         while (i < arrayX && array[i, j] == TileType.Wall && VerticalWallSurroundCheck(i, j)) {
                             i++;
                         }
                         i--;
                         edgeEnd = new Vector3(i * cellSize, 0, j * cellSize);
-                        Borders.Add(new Border(edgeStart, edgeEnd, false));
+                        edgeEndInts = new Vector2Int(i, j);
+                        Borders.Add(new Border(edgeStart, edgeEnd, edgeStartInts, edgeEndInts, false));
                     }
                 }
             }
@@ -447,10 +459,10 @@ public class ProceduralDungeon : MonoBehaviour {
         bottomLeft -= new Vector3(0, 0, cellSize);
         topRight -= new Vector3(cellSize, 0, 0);
 
-        Borders.Add(new Border(topLeft, topRight, true));
-        Borders.Add(new Border(topLeft, bottomLeft, false));
-        Borders.Add(new Border(topRight, bottomRight, false));
-        Borders.Add(new Border(bottomLeft, bottomRight, true));
+        Borders.Add(new Border(topLeft, topRight, Vector2Int.zero, Vector2Int.zero, true));
+        Borders.Add(new Border(topLeft, bottomLeft, Vector2Int.zero, Vector2Int.zero, false));
+        Borders.Add(new Border(topRight, bottomRight, Vector2Int.zero, Vector2Int.zero, false));
+        Borders.Add(new Border(bottomLeft, bottomRight, Vector2Int.zero, Vector2Int.zero, true));
 
         // Create an empty GameObject to act as the parent
         GameObject rectangleParent = new GameObject("Rectangle");
@@ -487,50 +499,150 @@ public class ProceduralDungeon : MonoBehaviour {
 
     private void MakeWalls() {
         //
+
+
         GameObject wallParent = new GameObject("Walls");
+        List<MeshFilter> wallsMeshFilters = new List<MeshFilter>();
         wallParent.transform.SetParent(this.transform);
-        //Make walls
-        bool[,] visited = new bool[arrayX, arrayY];
+        bool[,] placedTiles = new bool[arrayX, arrayY];
+        bool[,] directions = new bool[arrayX, arrayY]; // 0 means wall is horizontal, 1 means wall is vertical
         for (int i = 0; i < arrayX; i++) {
             for (int j = 0; j < arrayY; j++) {
-                if (array[i, j] == TileType.Wall) {
-                    if (!visited[i, j]) {
-                        int wallSize = 1;
-                        if (i + 1 < arrayX && array[i + 1, j] == TileType.Wall) {
-                            wallSize++;
-                        }
-                        if (j + 1 < arrayY && array[i, j + 1] == TileType.Wall) {
-                            wallSize++;
-                        }
-                        if (i + 1 < arrayX && j + 1 < arrayY && array[i + 1, j + 1] == TileType.Wall) {
-                            wallSize++;
-                        }
-                        if (wallSize == 1) {
-                            GameObject wall = Instantiate(walls1x1[Random.Range(0, walls1x1.Length)], new Vector3(i * cellSize, 0, j * cellSize), Quaternion.identity);
-                            wall.transform.SetParent(wallParent.transform);
-                            visited[i, j] = true;
-                        }
-                        else if (wallSize == 2) {
-                            if (i + 1 < arrayX && array[i + 1, j] == TileType.Wall) {
-                                GameObject wall = Instantiate(walls1x2[Random.Range(0, walls1x2.Length)], new Vector3(((i + i + 1) / 2f) * cellSize, 0, j * cellSize), Quaternion.identity);
-                                wall.transform.Rotate(Vector3.up, 90);
-                                wall.transform.SetParent(wallParent.transform);
-                                visited[i, j] = true;
-                                visited[i + 1, j] = true;
-                            }
-                            else {
-                                GameObject wall = Instantiate(walls1x2[Random.Range(0, walls1x2.Length)], new Vector3(i * cellSize, 0, ((j + j + 1) / 2f) * cellSize), Quaternion.identity);
-                                wall.transform.SetParent(wallParent.transform);
-                                visited[i, j] = true;
-                                visited[i, j + 1] = true;
-                            }
+                placedTiles[i, j] = false;
+            }
+        }
+        //Set directions (corners can be any direction since they will always be made first)
+        foreach (Border border in Borders) {
+            if (border.isHorizontal) {
+                for (int j = border.arrayStartCoords.y; j <= border.arrayEndCoords.y; j++) {
+                    directions[border.arrayStartCoords.x, j] = false;
+                }
+            }
+            else {
 
-                        }
-                    }
+                for (int i = border.arrayStartCoords.x; i <= border.arrayEndCoords.x; i++) {
+                    directions[i, border.arrayStartCoords.y] = true;
                 }
             }
         }
+        //Make walls
+        //Add the corners first
+        //foreach (Border border1 in Borders) { //Horizontal Borders
+        //    foreach (Border border2 in Borders) { //Vertical Borders
+        //        //Either their start or end is the same
+        //        //Or ones start is equal to the others end and vice versa
+        //        //Or they are the same
+        //        //Check if they are the same
+        //        if (!border1.isHorizontal) {
+        //            continue;
+        //        }
+        //        if (border2.isHorizontal) {
+        //            continue;
+        //        }
+        //        if (border1.arrayStartCoords == border1.arrayEndCoords && border1.arrayStartCoords == border2.arrayStartCoords && border1.arrayStartCoords == Vector2Int.zero) {
+        //            continue;
+        //        }
+        //        Vector3 cornerPos = Vector3.zero;
+        //        int cornerIndex = -1;
+        //        Vector2Int arrayCoords = Vector2Int.zero;
+        //        //Check if start is same
+        //        if (border1.arrayEndCoords == border2.arrayEndCoords) {
+        //            cornerPos = border1.End;
+        //            arrayCoords = border1.arrayEndCoords;
+        //            cornerIndex = 0;
+        //        }
+        //        else if (border1.arrayEndCoords == border2.arrayStartCoords) {
+        //            cornerPos = border1.End;
+        //            arrayCoords = border1.arrayEndCoords;
+        //            cornerIndex = 1;
+        //        }
+        //        else if (border1.arrayStartCoords == border2.arrayStartCoords) {
+        //            cornerPos = border1.Start;
+        //            arrayCoords = border1.arrayStartCoords;
+        //            cornerIndex = 2;
+        //        }
+        //        else if (border1.arrayStartCoords == border2.arrayEndCoords) {
+        //            cornerPos = border1.Start;
+        //            arrayCoords = border1.arrayStartCoords;
+        //            cornerIndex = 3;
+        //        }
+        //        if (cornerIndex != -1) {
+        //            GameObject obj = Instantiate(wallsCorners[cornerIndex], cornerPos, Quaternion.identity, wallParent.transform);
+        //            obj.transform.SetParent(wallParent.transform);
+        //            placedTiles[arrayCoords.x, arrayCoords.y] = true;
+        //        }
+        //    }
+        //}
+
+        //Add 2x1 walls by finding 2 tiles next to eachother in the same direction that are also not placed, place a 2x1 wall in between and mark them as placed
+        //for (int i = 0; i < arrayX; i++) {
+        //    for (int j = 0; j < arrayY; j++) {
+        //        if (array[i, j] == TileType.Wall && !placedTiles[i, j]) { //WE are on a wall tile
+        //            if (directions[i, j] == false) {//Wall is horizontal
+        //                if (j < arrayY - 1 && array[i, j + 1] == TileType.Wall && !placedTiles[i, j + 1] && !directions[i, j + 1]) {
+        //                    //If we have a 2nd tile in the same direction that is not placed and is also horizontal
+        //                    Vector3 wallPos = new Vector3(i * cellSize, 0, j * cellSize + cellSize / 2);
+        //                    GameObject obj = Instantiate(walls1x2[0], wallPos, Quaternion.identity, wallParent.transform);
+        //                    obj.transform.SetParent(wallParent.transform);
+        //                    placedTiles[i, j] = true;
+        //                    placedTiles[i, j + 1] = true;
+        //                }
+        //            }
+        //            else { //Wall is vertical
+        //                if (i < arrayX - 1 && array[i + 1, j] == TileType.Wall && !placedTiles[i + 1, j] && directions[i + 1, j]) {
+        //                    //If we have a 2nd tile in the same direction that is not placed and is also vertical
+        //                    Vector3 wallPos = new Vector3(i * cellSize + cellSize / 2, 0, j * cellSize);
+        //                    GameObject obj = Instantiate(walls1x2[0], wallPos, Quaternion.identity, wallParent.transform);
+        //                    obj.transform.Rotate(Vector3.up, 90);
+        //                    obj.transform.SetParent(wallParent.transform);
+        //                    placedTiles[i, j] = true;
+        //                    placedTiles[i + 1, j] = true;
+
+        //                }
+        //            }
+        //        }
+        //    }
+        //}
+        //Add 1x1 walls
+        for (int i = 0; i < arrayX; i++) {
+            for (int j = 0; j < arrayY; j++) {
+                if (array[i, j] == TileType.Wall && !placedTiles[i, j]) {
+                    Vector3 wallPos = new Vector3(i * cellSize, 0, j * cellSize);
+                    GameObject obj = Instantiate(walls1x1[0], wallPos, Quaternion.identity, wallParent.transform);
+                    if (directions[i, j])
+                        obj.transform.Rotate(Vector3.up, 90);
+                    obj.SetActive(false);
+                    MeshFilter meshFilter = obj.GetComponent<MeshFilter>();
+                    if (meshFilter != null) {
+                        wallsMeshFilters.Add(meshFilter);
+                    }
+                    Destroy(obj);
+                    placedTiles[i, j] = true;
+
+                }
+            }
+        }
+
+        //Merge all walls into one gameObject
+        CombineInstance[] combine = new CombineInstance[wallsMeshFilters.Count];
+        for (int i = 0; i < wallsMeshFilters.Count; i++) {
+            combine[i].mesh = wallsMeshFilters[i].sharedMesh;
+            combine[i].transform = wallsMeshFilters[i].transform.localToWorldMatrix;
+        }
+
+        GameObject combinedWalls = new GameObject("CombinedWalls");
+        combinedWalls.transform.SetParent(this.transform);
+        MeshFilter combinedMeshFilter = combinedWalls.AddComponent<MeshFilter>();
+        combinedMeshFilter.mesh = new Mesh();
+        combinedMeshFilter.mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        combinedMeshFilter.mesh.CombineMeshes(combine);
+
+        MeshRenderer combinedMeshRenderer = combinedWalls.AddComponent<MeshRenderer>();
+        combinedMeshRenderer.sharedMaterial = walls1x1[0].GetComponent<MeshRenderer>().sharedMaterial;
+
     }
+
+
 
 
     private void Update() {
@@ -538,5 +650,6 @@ public class ProceduralDungeon : MonoBehaviour {
             Debug.DrawLine(border.Start, border.End, Color.red);
         }
     }
+
 
 }
