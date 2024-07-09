@@ -5,4 +5,5 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class DungeonRoomListSO : ScriptableObject {
     public Transform[] roomList;
+    public Transform[] corridorList;
 }

@@ -243,7 +243,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dungeonRoomList: {fileID: 11400000, guid: d73d5791a21ea274f84e8c9874db7f9d, type: 2}
   seed: 0
-  maxRoomCount: 20
+  maxRoomCount: 100
 --- !u!1 &1277702424
 GameObject:
   m_ObjectHideFlags: 0

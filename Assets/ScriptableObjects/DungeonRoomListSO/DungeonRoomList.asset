@@ -17,3 +17,5 @@ MonoBehaviour:
   - {fileID: 3758775831966726938, guid: 45e3c0947dbf46e4b80194036e45778b, type: 3}
   - {fileID: 8592591320379634129, guid: 627a42e07f96a24418fac5b9ee945eb1, type: 3}
   - {fileID: 4429132204112340995, guid: de4ea12d832c5e54c94a2cc3747421ff, type: 3}
+  corridorList:
+  - {fileID: 4429132204112340995, guid: 4af22d6add8671d4992b403a2e9737a5, type: 3}
