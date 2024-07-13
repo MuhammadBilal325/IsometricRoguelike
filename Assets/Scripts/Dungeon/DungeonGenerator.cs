@@ -4,8 +4,7 @@ using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Rendering;
 
-public class DungeonGenerator : MonoBehaviour
-{
+public class DungeonGenerator : MonoBehaviour {
 
 
 
@@ -16,56 +15,61 @@ public class DungeonGenerator : MonoBehaviour
     private int tries = 0;
     private List<Transform> rooms;
     private List<ExitPoint> availableExitPoints;
-    private void Awake()
-    {
+    private void Awake() {
         availableExitPoints = new List<ExitPoint>();
         rooms = new List<Transform>();
         Random.InitState(seed);
         GenerateDungeon();
     }
 
-    private void GenerateDungeon()
-    {
-        availableExitPoints.Add(new ExitPoint(transform, RoomType.PlayerRoom));
+    private void GenerateDungeon() {
         //Get The startPoint of the room
         int i = 0;
-        do
-        {
+        int roomIndex;
+        DungeonRoom dungeonRoom;
+
+        do {
+            if (i == 0) {
+                //Instantiate the first room
+                roomIndex = Random.Range(0, dungeonRoomList.roomList.Length);
+                rooms.Add(Instantiate(dungeonRoomList.roomList[roomIndex], transform.position, transform.rotation));
+                //Get the dungeonRoom
+                dungeonRoom = rooms[i].GetComponent<DungeonRoom>();
+                rooms[i].transform.position += transform.position - dungeonRoom.EntryPoint.position;
+                //Add its exit points to the available exit points
+                for (int j = 0; j < dungeonRoom.ExitPoints.Length; j++) {
+                    availableExitPoints.Add(dungeonRoom.ExitPoints[j]);
+                }
+                i++;
+                continue;
+            }
             //Choose a random exit point to pop
             int randomExitPoint = Random.Range(0, availableExitPoints.Count);
             ExitPoint exitPoint = availableExitPoints[randomExitPoint];
-
             //Instantiate the room
             //Choose which type of room to instantiate based on last room
             //If last room was corridor we have 90% chance of non corridor room
             //If last room was normal room we have 80% chance of corridor room
             RoomType roomToSpawn = RoomType.Normal;
-            if (exitPoint.roomType == RoomType.Corridor)
-            {
-                if (Random.Range(0, 10) < 9f)
-                {
+            if (exitPoint.RoomType == RoomType.Corridor) {
+                if (Random.Range(0, 10) < 9f) {
                     roomToSpawn = RoomType.Normal;
                 }
-                else
-                {
+                else {
                     roomToSpawn = RoomType.Corridor;
                 }
             }
-            else if (exitPoint.roomType == RoomType.Normal)
-            {
-                if (Random.Range(0, 10) < 8f)
-                {
+            else if (exitPoint.RoomType == RoomType.Normal) {
+                if (Random.Range(0, 10) < 8f) {
                     roomToSpawn = RoomType.Corridor;
                 }
-                else
-                {
+                else {
                     roomToSpawn = RoomType.Normal;
                 }
 
             }
-            int roomIndex = 0;
-            switch (roomToSpawn)
-            {
+            roomIndex = 0;
+            switch (roomToSpawn) {
                 case RoomType.Corridor:
                     roomIndex = Random.Range(0, dungeonRoomList.corridorList.Length);
                     rooms.Add(Instantiate(dungeonRoomList.corridorList[roomIndex], exitPoint.transform.position, exitPoint.transform.rotation));
@@ -80,7 +84,7 @@ public class DungeonGenerator : MonoBehaviour
             }
 
             //Get the dungeonRoom
-            DungeonRoom dungeonRoom = rooms[i].GetComponent<DungeonRoom>();
+            dungeonRoom = rooms[i].GetComponent<DungeonRoom>();
 
             //Move the room so the start of the room and exit point that it was instantiated are at the same point
 
@@ -88,40 +92,41 @@ public class DungeonGenerator : MonoBehaviour
             Physics.SyncTransforms();
             //Check if the room is colliding with any other room
             bool isColliding = false;
-            for (int j = 0; j < rooms.Count; j++)
-            {
-                if (j != i && rooms[j].GetComponent<DungeonRoom>().IsColliding(dungeonRoom))
-                {
+            for (int j = 0; j < rooms.Count; j++) {
+                if (j != i && rooms[j].GetComponent<DungeonRoom>().IsColliding(dungeonRoom)) {
                     isColliding = true;
                     break;
                 }
             }
-            if (!isColliding)
-            {
+            if (!isColliding) {
 
                 //Remove the exit point from the available exit points
                 availableExitPoints.RemoveAt(randomExitPoint);
                 //Add its exit points to the available exit points
-                for (int j = 0; j < dungeonRoom.ExitPoints.Length; j++)
-                {
+                for (int j = 0; j < dungeonRoom.ExitPoints.Length; j++) {
                     availableExitPoints.Add(dungeonRoom.ExitPoints[j]);
                 }
                 dungeonRoom.SetMaterialColor(Random.ColorHSV());
                 i++;
             }
-            else
-            {
+            else {
                 Destroy(rooms[i].gameObject);
                 rooms.RemoveAt(i);
             }
             tries++;
         }
         while (availableExitPoints.Count > 0 && i < maxRoomCount && tries < (maxRoomCount * maxRoomCount * maxRoomCount) / 2);
+
+
+        //Once all rooms are built go through remaining exit points and close them
+        for (int j = 0; j < availableExitPoints.Count; j++) {
+            availableExitPoints[j].SetClosed();
+        }
+
+        for(int j= 0; j < rooms.Count; j++) {
+         rooms[j].transform.SetParent(transform);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    
 }
