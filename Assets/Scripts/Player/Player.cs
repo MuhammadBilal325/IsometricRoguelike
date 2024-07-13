@@ -304,7 +304,9 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     public bool IsColliderValidForCollisions(Collider coll) {
-        if (coll.CompareTag(Tags.PLAYER_ATTACK_TAG) || coll.CompareTag(Tags.ENEMY_ATTACK_TAG))
+        if (coll.CompareTag(Tags.PLAYER_ATTACK_TAG) 
+            || coll.CompareTag(Tags.ENEMY_ATTACK_TAG) 
+            || coll.CompareTag(Tags.PLAYER_TRIGGER_DETECTOR))
             return false;
         return true;
     }
@@ -432,6 +434,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         return HittableType.Player;
     }
     #endregion
+
+
     public bool IsAlive() {
         return state == State.Normal;
     }
