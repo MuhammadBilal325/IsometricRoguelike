@@ -252,6 +252,37 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 28, y: 1, z: 12}
   m_Center: {x: 14, y: 6.29, z: 0}
+--- !u!1 &8179793315607756910
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5942392999578018026}
+  m_Layer: 6
+  m_Name: EnemySpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5942392999578018026
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8179793315607756910}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 19.75, y: 0.25, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4429132204112340995}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8869312201251577214
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,6 +316,7 @@ Transform:
   m_Children:
   - {fileID: 8334507495026065749}
   - {fileID: 6557317504955817139}
+  - {fileID: 5942392999578018026}
   - {fileID: 6686316158150422498}
   - {fileID: 5228688757423512683}
   m_Father: {fileID: 0}
@@ -306,6 +338,8 @@ MonoBehaviour:
   roomType: 1
   exitPoints:
   - {fileID: 1279384518056942354}
+  enemySpawnPoints:
+  - {fileID: 5942392999578018026}
 --- !u!65 &2261694278274315099
 BoxCollider:
   m_ObjectHideFlags: 0

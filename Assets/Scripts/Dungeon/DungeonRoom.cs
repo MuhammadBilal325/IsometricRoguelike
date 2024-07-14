@@ -17,11 +17,13 @@ public class DungeonRoom : MonoBehaviour {
     [SerializeField] private BoxCollider boxCollider;
     [SerializeField] private RoomType roomType;
     [SerializeField] private ExitPoint[] exitPoints;
+    [SerializeField] private Transform[] enemySpawnPoints;
     private int id;
    
     public ExitPoint[] ExitPoints { get => exitPoints; private set { } }
     public Transform EntryPoint { get => entryPoint; private set { } }
 
+    public Transform[] EnemyPoints { get => enemySpawnPoints; private set { } }
     public int ID { get => id; private set { } }
     public void SetID(int num) {
         id = num;
@@ -36,5 +38,7 @@ public class DungeonRoom : MonoBehaviour {
         return boxCollider.bounds;
     }
 
+    public void DisableRenderers() {
+    }
 
 }

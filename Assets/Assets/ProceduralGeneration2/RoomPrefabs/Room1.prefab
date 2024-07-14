@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2312079180446228196
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5669313453547010722}
+  m_Layer: 0
+  m_Name: EnemyPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5669313453547010722
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2312079180446228196}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 10, y: 0.5, z: -10}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3807057302977233304}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2437319317337330153
 GameObject:
   m_ObjectHideFlags: 0
@@ -300,6 +331,7 @@ Transform:
   - {fileID: 3424598096230475407}
   - {fileID: 9160677965606086460}
   - {fileID: 7305131298152782109}
+  - {fileID: 5669313453547010722}
   - {fileID: 8662656056959335598}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -322,6 +354,8 @@ MonoBehaviour:
   - {fileID: 7101408865872401023}
   - {fileID: 3614873712120779724}
   - {fileID: 2912371384591429101}
+  enemySpawnPoints:
+  - {fileID: 5669313453547010722}
 --- !u!65 &1465222002298243428
 BoxCollider:
   m_ObjectHideFlags: 0

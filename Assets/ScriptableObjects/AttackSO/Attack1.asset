@@ -16,9 +16,8 @@ MonoBehaviour:
     type: 3}
   attackSpawnVFX: {fileID: 642391246648651205, guid: b55bc88a3fdc9c1419041cbeb7225d0a,
     type: 3}
-  attackSprite: {fileID: 0}
   attackName: X-Projectile
-  attackDuration: 20
+  attackDuration: 3
   attackCooldown: 0.5
   attackDelay: 0.1
   attackDamage: 10

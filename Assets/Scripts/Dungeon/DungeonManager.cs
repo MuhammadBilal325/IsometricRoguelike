@@ -50,6 +50,7 @@ public class DungeonManager : MonoBehaviour {
     public static DungeonManager Instance { get; private set; }
 
     [SerializeField] private DungeonRoomListSO dungeonRoomList;
+    [SerializeField] private EnemyListSO enemyListSo;
     [SerializeField] private int seed;
     [SerializeField] private int maxRoomCount = 10;
     [SerializeField] private int maxDFSDepth = 4;
@@ -68,6 +69,9 @@ public class DungeonManager : MonoBehaviour {
         Random.InitState(seed);
         GenerateDungeon();
         refreshRoomIDs();
+        SpawnEnemies();
+
+
         for (int i = 0; i < rooms.Count; i++) {
             rooms[i].Transform.gameObject.SetActive(false);
         }
@@ -204,6 +208,19 @@ public class DungeonManager : MonoBehaviour {
         DFSUpdateRoom(rooms[id], depth, ref visited);
     }
 
+    private void SpawnEnemies() {
+        //Go through each enemyPoint of each room and spawn enemies with a random chance
+        for (int i = 0; i < rooms.Count; i++) {
+            Transform[] enemyPoints = rooms[i].Transform.GetComponent<DungeonRoom>().EnemyPoints;
+            for (int j = 0; j < enemyPoints.Length; j++) {
+                if (Random.Range(0, 10) < 5) {
+                    int enemyIndex = Random.Range(0, enemyListSo.enemies.Count);
+                    Instantiate(enemyListSo.enemies[enemyIndex].enemyPrefab, enemyPoints[j].position, enemyPoints[j].rotation);
+                }
+            }
+        }
+
+    }
     private void DFSUpdateRoom(RoomNode parent, int depth, ref bool[] visited) {
         if (depth > maxDFSDepth) {
             return;
@@ -218,7 +235,7 @@ public class DungeonManager : MonoBehaviour {
             }
         }
         else  {
-            parent.Transform.gameObject.SetActive(false);
+            parent.Transform.GetComponent<DungeonRoom>().DisableRenderers();
         }
     }
 

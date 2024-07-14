@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class Attack1 : BaseAttack {
     [SerializeField] private float attackSpeed;
-    [SerializeField] private float attackRange;
     private Vector3 spawnPoint;
     void Start() {
         spawnPoint = transform.position;
@@ -13,10 +12,7 @@ public class Attack1 : BaseAttack {
     }
 
     void Update() {
-        transform.Translate(attackSpeed * Time.deltaTime * Vector3.forward);
-        if (Vector3.SqrMagnitude(spawnPoint - transform.position) > attackRange * attackRange) {
-            Destroy(this.gameObject);
-        }
+        transform.Translate(attackSpeed * Time.deltaTime * Vector3.forward);    
     }
 
     public override void OnHit(IHittable hitObject) {
