@@ -2,8 +2,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public enum RoomType
-{
+public enum RoomType {
     PlayerRoom,
     Corridor,
     Normal
@@ -12,14 +11,16 @@ public enum RoomType
 
 
 public class DungeonRoom : MonoBehaviour {
-   
+
     [SerializeField] private Transform entryPoint;
     [SerializeField] private BoxCollider boxCollider;
     [SerializeField] private RoomType roomType;
     [SerializeField] private ExitPoint[] exitPoints;
     [SerializeField] private Transform[] enemySpawnPoints;
+    [SerializeField] private MeshRenderer[] renderers;
+    [SerializeField] private Transform[] lights;
     private int id;
-   
+
     public ExitPoint[] ExitPoints { get => exitPoints; private set { } }
     public Transform EntryPoint { get => entryPoint; private set { } }
 
@@ -33,12 +34,33 @@ public class DungeonRoom : MonoBehaviour {
         return boxCollider.bounds.Intersects(other.GetBounds());
     }
 
-    
+
     public Bounds GetBounds() {
         return boxCollider.bounds;
     }
 
-    public void DisableRenderers() {
+    public void DisableLights() {
+        for (int i = 0; i < lights.Length; i++) {
+            lights[i].gameObject.SetActive(false);
+        }
     }
 
+    public void EnableLights() {
+        for (int i = 0; i < lights.Length; i++) {
+            lights[i].gameObject.SetActive(true);
+        }
+    }
+
+    public void DisableRenderers() {
+        for (int i = 0; i < renderers.Length; i++) {
+            renderers[i].enabled = false;
+        }
+
+    }
+    public void EnableRenderers() {
+        for (int i = 0; i < renderers.Length; i++) {
+            renderers[i].enabled = true;
+        }
+
+    }
 }

@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -240,8 +239,9 @@ MonoBehaviour:
   dungeonRoomList: {fileID: 11400000, guid: d73d5791a21ea274f84e8c9874db7f9d, type: 2}
   enemyListSo: {fileID: 11400000, guid: 1a01c0dfe6587c2459a69bd68cc319e6, type: 2}
   seed: 0
-  maxRoomCount: 10
-  maxDFSDepth: 6
+  maxRoomCount: 20
+  maxDFSDepthRoomCulling: 3
+  maxDFSDepthLightCulling: 2
 --- !u!1 &1277702424
 GameObject:
   m_ObjectHideFlags: 0

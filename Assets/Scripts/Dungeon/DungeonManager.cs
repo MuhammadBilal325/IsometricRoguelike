@@ -11,12 +11,14 @@ public class DungeonManager : MonoBehaviour {
 
     private class RoomNode {
         public Transform Transform { get; private set; }
+
+        public DungeonRoom roomScript { get; private set; }
         public List<RoomNode> Neighbors { get; private set; }
 
         public RoomNode(Transform roomTransform) {
             this.Transform = roomTransform;
+            roomScript = roomTransform.GetComponent<DungeonRoom>();
             Neighbors = new List<RoomNode>();
-
         }
 
         public void AddNeighbor(RoomNode neighbour) {
@@ -53,7 +55,8 @@ public class DungeonManager : MonoBehaviour {
     [SerializeField] private EnemyListSO enemyListSo;
     [SerializeField] private int seed;
     [SerializeField] private int maxRoomCount = 10;
-    [SerializeField] private int maxDFSDepth = 4;
+    [SerializeField] private int maxDFSDepthRoomCulling = 4;
+    [SerializeField] private int maxDFSDepthLightCulling = 1;
     private int tries = 0;
     private List<RoomNode> rooms;
     private List<Exit> availableExitPoints;
@@ -70,10 +73,9 @@ public class DungeonManager : MonoBehaviour {
         GenerateDungeon();
         refreshRoomIDs();
         SpawnEnemies();
-
-
-        for (int i = 0; i < rooms.Count; i++) {
-            rooms[i].Transform.gameObject.SetActive(false);
+        for (int i = 0; i < maxRoomCount; i++) {
+            rooms[i].roomScript.DisableRenderers();
+            rooms[i].roomScript.DisableLights();
         }
         UpdateRooms(0);
     }
@@ -205,7 +207,13 @@ public class DungeonManager : MonoBehaviour {
         for (int i = 0; i < rooms.Count; i++) {
             visited[i] = false;
         }
-        DFSUpdateRoom(rooms[id], depth, ref visited);
+        //Use room ids to access their array locations
+        DFSUpdateRoomCulling(rooms[id], depth, ref visited);
+        for (int i = 0; i < rooms.Count; i++) {
+            visited[i] = false;
+        }
+        depth = 0;
+        DFSUpdateLightCulling(rooms[id], depth, ref visited);
     }
 
     private void SpawnEnemies() {
@@ -221,22 +229,51 @@ public class DungeonManager : MonoBehaviour {
         }
 
     }
-    private void DFSUpdateRoom(RoomNode parent, int depth, ref bool[] visited) {
-        if (depth > maxDFSDepth) {
+    private void DFSUpdateRoomCulling(RoomNode parent, int depth, ref bool[] visited) {
+        //Dont need to handle rooms more than 1 room beyond
+        if (depth > maxDFSDepthRoomCulling) {
             return;
         }
-        visited[parent.Transform.GetComponent<DungeonRoom>().ID] = true;
-        if (depth < maxDFSDepth) {
-            parent.Transform.gameObject.SetActive(true);
+        //Make current node visited
+        visited[parent.roomScript.ID] = true;
+        if (depth < maxDFSDepthRoomCulling) {
+            //Enable room if its in dfs
+            parent.roomScript.EnableRenderers();
+            //Visit all neighbours that haven't been visited
             for (int i = 0; i < parent.Neighbors.Count; i++) {
-                if (!visited[parent.Neighbors[i].Transform.GetComponent<DungeonRoom>().ID]) {
-                    DFSUpdateRoom(parent.Neighbors[i],  depth + 1, ref visited);
+                if (!visited[parent.Neighbors[i].roomScript.ID]) {
+                    DFSUpdateRoomCulling(parent.Neighbors[i], depth + 1, ref visited);
                 }
             }
         }
-        else  {
-            parent.Transform.GetComponent<DungeonRoom>().DisableRenderers();
+        else if (depth == maxDFSDepthRoomCulling) {
+            //Disable room if its on border of dfs
+            parent.roomScript.DisableRenderers();
         }
+
     }
 
+    private void DFSUpdateLightCulling(RoomNode parent, int depth, ref bool[] visited) {
+        //Dont need to handle rooms more than 1 room beyond
+        if (depth > maxDFSDepthLightCulling) {
+            return;
+        }
+        //Make current node visited
+        visited[parent.roomScript.ID] = true;
+        if (depth < maxDFSDepthLightCulling) {
+            //Enable room if its in dfs
+            parent.roomScript.EnableLights();
+            //Visit all neighbours that haven't been visited
+            for (int i = 0; i < parent.Neighbors.Count; i++) {
+                if (!visited[parent.Neighbors[i].roomScript.ID]) {
+                    DFSUpdateLightCulling(parent.Neighbors[i], depth + 1, ref visited);
+                }
+            }
+        }
+        else if (depth == maxDFSDepthLightCulling) {
+            //Disable room if its on border of dfs
+            parent.roomScript.DisableLights();
+        }
+
+    }
 }
