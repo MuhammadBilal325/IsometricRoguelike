@@ -1,8 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class ExitPoint : MonoBehaviour
-{
+public class ExitPoint : MonoBehaviour {
     [SerializeField] private Transform open;
     [SerializeField] private Transform closed;
     [SerializeField] private RoomType roomType;

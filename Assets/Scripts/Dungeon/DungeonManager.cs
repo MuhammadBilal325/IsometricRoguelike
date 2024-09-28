@@ -56,7 +56,6 @@ public class DungeonManager : MonoBehaviour {
     [SerializeField] private int seed;
     [SerializeField] private int maxRoomCount = 10;
     [SerializeField] private int maxDFSDepthRoomCulling = 4;
-    [SerializeField] private int maxDFSDepthLightCulling = 1;
     private int tries = 0;
     private List<RoomNode> rooms;
     private List<Exit> availableExitPoints;
@@ -75,7 +74,6 @@ public class DungeonManager : MonoBehaviour {
         SpawnEnemies();
         for (int i = 0; i < maxRoomCount; i++) {
             rooms[i].roomScript.DisableRenderers();
-            rooms[i].roomScript.DisableLights();
         }
         UpdateRooms(0);
     }
@@ -213,7 +211,6 @@ public class DungeonManager : MonoBehaviour {
             visited[i] = false;
         }
         depth = 0;
-        DFSUpdateLightCulling(rooms[id], depth, ref visited);
     }
 
     private void SpawnEnemies() {
@@ -253,27 +250,5 @@ public class DungeonManager : MonoBehaviour {
 
     }
 
-    private void DFSUpdateLightCulling(RoomNode parent, int depth, ref bool[] visited) {
-        //Dont need to handle rooms more than 1 room beyond
-        if (depth > maxDFSDepthLightCulling) {
-            return;
-        }
-        //Make current node visited
-        visited[parent.roomScript.ID] = true;
-        if (depth < maxDFSDepthLightCulling) {
-            //Enable room if its in dfs
-            parent.roomScript.EnableLights();
-            //Visit all neighbours that haven't been visited
-            for (int i = 0; i < parent.Neighbors.Count; i++) {
-                if (!visited[parent.Neighbors[i].roomScript.ID]) {
-                    DFSUpdateLightCulling(parent.Neighbors[i], depth + 1, ref visited);
-                }
-            }
-        }
-        else if (depth == maxDFSDepthLightCulling) {
-            //Disable room if its on border of dfs
-            parent.roomScript.DisableLights();
-        }
 
-    }
 }

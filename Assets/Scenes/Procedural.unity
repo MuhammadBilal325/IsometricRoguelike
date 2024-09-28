@@ -239,7 +239,7 @@ MonoBehaviour:
   dungeonRoomList: {fileID: 11400000, guid: d73d5791a21ea274f84e8c9874db7f9d, type: 2}
   enemyListSo: {fileID: 11400000, guid: 1a01c0dfe6587c2459a69bd68cc319e6, type: 2}
   seed: 0
-  maxRoomCount: 20
+  maxRoomCount: 2
   maxDFSDepthRoomCulling: 3
   maxDFSDepthLightCulling: 2
 --- !u!1 &1277702424

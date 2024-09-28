@@ -18,7 +18,6 @@ public class DungeonRoom : MonoBehaviour {
     [SerializeField] private ExitPoint[] exitPoints;
     [SerializeField] private Transform[] enemySpawnPoints;
     [SerializeField] private MeshRenderer[] renderers;
-    [SerializeField] private Transform[] lights;
     private int id;
 
     public ExitPoint[] ExitPoints { get => exitPoints; private set { } }
@@ -39,17 +38,6 @@ public class DungeonRoom : MonoBehaviour {
         return boxCollider.bounds;
     }
 
-    public void DisableLights() {
-        for (int i = 0; i < lights.Length; i++) {
-            lights[i].gameObject.SetActive(false);
-        }
-    }
-
-    public void EnableLights() {
-        for (int i = 0; i < lights.Length; i++) {
-            lights[i].gameObject.SetActive(true);
-        }
-    }
 
     public void DisableRenderers() {
         for (int i = 0; i < renderers.Length; i++) {
