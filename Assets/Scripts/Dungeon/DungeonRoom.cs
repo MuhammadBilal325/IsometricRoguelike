@@ -49,6 +49,4 @@ public class DungeonRoom : MonoBehaviour {
         for (int i = 0; i < renderers.Length; i++) {
             renderers[i].enabled = true;
         }
-
     }
-}
