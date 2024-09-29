@@ -8,6 +8,8 @@ public class GameInput : MonoBehaviour {
     public static GameInput Instance { get; private set; }
     public event EventHandler Attack1Pressed;
     public event EventHandler Attack2Pressed;
+    public event EventHandler BlockPressed;
+    public event EventHandler BlockLifted;
     public event EventHandler DashPressed;
     public event EventHandler DebugPressed;
     PlayerInputActions playerInputActions;
@@ -28,6 +30,16 @@ public class GameInput : MonoBehaviour {
         playerInputActions.Player.Attack_2.performed += Attack_2_performed;
         playerInputActions.Player.Dash.performed += Dash_performed;
         playerInputActions.Debug.PrintArr.performed += Debug_performed;
+        playerInputActions.Player.Block.performed += Block_performed;
+        playerInputActions.Player.Block.canceled += Block_canceled;
+    }
+
+    private void Block_canceled(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        BlockLifted?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void Block_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        BlockPressed?.Invoke(this, EventArgs.Empty);
     }
 
     private void Debug_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {

@@ -5,7 +5,7 @@ using UnityEngine.InputSystem.iOS;
 
 public class PlayerVisual : MonoBehaviour {
 
-    [SerializeField] private float dampTime = 0.1f;
+    [SerializeField] private float movementDampTime = 0.1f;
     [SerializeField] private List<float> maxAttackTimers;
     private Animator animator;
     private Player player;
@@ -13,6 +13,7 @@ public class PlayerVisual : MonoBehaviour {
     private readonly string HORIZONTAL_DIRECTION = "HorizontalMovement";
     private readonly string MOVEMENT_BOOL = "Moving";
     private readonly string ATTACK_BOOL = "Attacking";
+    private readonly string BLOCK_BOOL = "Blocking";
     private readonly string ATTACK_INDEX = "Attack_Index";
     private float attackTimer = 0f;
     private bool isHitPaused;
@@ -24,10 +25,14 @@ public class PlayerVisual : MonoBehaviour {
         player = Player.Instance;
         player.Attack1Pressed += Player_Attack1Pressed;
         player.Attack2Pressed += Player_Attack2Pressed;
+        player.BlockChanged += Player_BlockChanged;
         player.HitPauseStart += Player_HitPauseStart;
         player.HitPauseEnd += Player_HitPauseEnd;
     }
 
+    private void Player_BlockChanged(object sender, Player.BlockChangedArgs e) {
+        animator.SetBool(BLOCK_BOOL, e.isBlocking);
+    }
 
     private void Player_HitPauseEnd(object sender, System.EventArgs e) {
         isHitPaused = false;
@@ -68,8 +73,8 @@ public class PlayerVisual : MonoBehaviour {
     private void SetMovement() {
         pointerMovementVector = player.GetPlayerMovementVectorRelativeToPointer();
         if (pointerMovementVector != Vector3.zero) {
-            animator.SetFloat(VERTICAL_DIRECTION, pointerMovementVector.z, dampTime, Time.deltaTime);
-            animator.SetFloat(HORIZONTAL_DIRECTION, pointerMovementVector.x, dampTime, Time.deltaTime);
+            animator.SetFloat(VERTICAL_DIRECTION, pointerMovementVector.z, movementDampTime, Time.deltaTime);
+            animator.SetFloat(HORIZONTAL_DIRECTION, pointerMovementVector.x, movementDampTime, Time.deltaTime);
             animator.SetBool(MOVEMENT_BOOL, true);
         }
         else {

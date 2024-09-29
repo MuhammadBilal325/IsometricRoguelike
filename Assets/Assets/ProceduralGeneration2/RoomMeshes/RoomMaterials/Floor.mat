@@ -15,7 +15,7 @@ Material:
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -96,7 +96,7 @@ Material:
     - _ClearCoatSmoothness: 0
     - _Cull: 2
     - _Cutoff: 0.5
-    - _Darken: 0.67
+    - _Darken: 0.648
     - _DetailAlbedoMapScale: 1
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -112,7 +112,7 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _SampleGI: 0
-    - _Saturate: 2.39
+    - _Saturate: 3.62
     - _Smoothness: 0.686
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -125,7 +125,7 @@ Material:
     - _BaseColor: {r: 0.8726415, g: 0.93393815, b: 1, a: 1}
     - _Color: {r: 0.8726415, g: 0.93393815, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _MultiplyCol: {r: 1, g: 1, b: 1, a: 0}
+    - _MultiplyCol: {r: 0.46070665, g: 0.6556133, b: 0.8207547, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &6619888385748825371

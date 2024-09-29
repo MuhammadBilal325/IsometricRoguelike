@@ -20,6 +20,10 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
     public event EventHandler Attack1Pressed;
     public event EventHandler Attack2Pressed;
+    public event EventHandler<BlockChangedArgs> BlockChanged;
+    public class BlockChangedArgs : EventArgs {
+        public bool isBlocking;
+    }
     public event EventHandler OnHit;
     public event EventHandler OnDeath;
     public event EventHandler HitPauseStart;
@@ -47,6 +51,12 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     private int currentAttackIndex = 0;
     private int currentAttackComboIndex = -1;
     private float attackComboTimer = 0f;
+
+    //Blocking
+    [Header("Block")]
+    [SerializeField] private float damageReduction = 0.5f;
+
+    private bool isBlocking = false;
     //Movement
     [Header("Movement")]
     [SerializeField] private float playerSpeed;
@@ -78,9 +88,15 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         addVelocity = Vector3.zero;
         GameInput.Instance.Attack1Pressed += GameInput_Attack1Pressed;
         GameInput.Instance.Attack2Pressed += GameInput_Attack2Pressed;
+        GameInput.Instance.BlockPressed += GameInput_BlockPressed;
         GameInput.Instance.DashPressed += GameInput_DashPressed;
+        GameInput.Instance.BlockPressed += GameInput_BlockPressed;
+        GameInput.Instance.BlockLifted += GameInput_BlockLifted;
         Motor.CharacterController = this;
     }
+
+
+
 
     #region Inputs
     private void GameInput_DashPressed(object sender, EventArgs e) {
@@ -125,6 +141,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
     }
     private void Attack1() {
+        isBlocking = false;
+        BlockChanged?.Invoke(this, new BlockChangedArgs { isBlocking = isBlocking });
         Attack1Pressed?.Invoke(this, EventArgs.Empty);
         AddVelocity(transform.forward * attack1Pushback);
         CameraController.Instance.AddTrauma(attack1Shake);
@@ -133,6 +151,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         }
     }
     private void Attack2() {
+        isBlocking = false;
+        BlockChanged?.Invoke(this, new BlockChangedArgs { isBlocking = isBlocking });
         Attack2Pressed?.Invoke(this, EventArgs.Empty);
         AddVelocity(transform.forward * attack2Pushback);
         if (attackCoroutine == null) {
@@ -180,6 +200,20 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
             Destroy(obj);
     }
     #endregion
+
+    private void GameInput_BlockPressed(object sender, EventArgs e) {
+        if (attackCooldown <= 0 && !hitPaused) {
+            isBlocking = true;
+            BlockChanged?.Invoke(this, new BlockChangedArgs { isBlocking = isBlocking });
+        }
+    }
+    private void GameInput_BlockLifted(object sender, EventArgs e) {
+        if (isBlocking) {
+            isBlocking = false;
+            BlockChanged?.Invoke(this, new BlockChangedArgs { isBlocking = isBlocking });
+        }
+    }
+
 
     #region HitPause
 
@@ -304,8 +338,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     public bool IsColliderValidForCollisions(Collider coll) {
-        if (coll.CompareTag(Tags.PLAYER_ATTACK_TAG) 
-            || coll.CompareTag(Tags.ENEMY_ATTACK_TAG) 
+        if (coll.CompareTag(Tags.PLAYER_ATTACK_TAG)
+            || coll.CompareTag(Tags.ENEMY_ATTACK_TAG)
             || coll.CompareTag(Tags.PLAYER_TRIGGER_DETECTOR))
             return false;
         return true;
@@ -412,7 +446,10 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         }
         if (attack.GetTarget() == HittableType.Player) {
             CameraController.Instance.AddTrauma(0.3f);
-            health -= attack.GetDamage();
+            if (isBlocking)
+                health -= (int)(attack.GetDamage() * damageReduction);
+            else
+                health -= attack.GetDamage();
             OnHit?.Invoke(this, EventArgs.Empty);
             if (health <= 0) {
                 state = State.Dead;

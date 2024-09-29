@@ -8,13 +8,13 @@ public class LaserBeamAttack : BaseAttack {
     [SerializeField] private BoxCollider beamCollider;
     private float spawnTime = 0f;
     [SerializeField] private float maxRange;
-    [SerializeField] LayerMask mask;
+    [SerializeField] LayerMask raycastMask;
     private void Awake() {
         //Do a raycast for the range and set visual range to the distance of the raycast hit
         RaycastHit hit;
         float finalScaleY = maxRange / 2;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, mask)) {
-            finalScaleY = hit.distance / 2;
+        if (Physics.Raycast(transform.position, transform.forward, out hit, float.PositiveInfinity, raycastMask)) {
+            finalScaleY = (hit.distance) / 2;
         }
         beamSpawnPoint.localScale = new Vector3(
             beamSpawnPoint.localScale.x,

@@ -259,9 +259,9 @@ MonoBehaviour:
   beamSpawnPoint: {fileID: 6076707198713751372}
   beamCollider: {fileID: 6347268443753706476}
   maxRange: 50
-  mask:
+  raycastMask:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 512
 --- !u!65 &6347268443753706476 stripped
 BoxCollider:
   m_CorrespondingSourceObject: {fileID: 7868744774881063803, guid: 6ad9ee92945f2734487f6b853e5b1c47,
