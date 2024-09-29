@@ -70,6 +70,8 @@ public class DungeonManager : MonoBehaviour {
         rooms = new List<RoomNode>();
         Random.InitState(seed);
         GenerateDungeon();
+        //Static batch all the rooms
+        StaticBatchingUtility.Combine(this.gameObject);
         refreshRoomIDs();
         SpawnEnemies();
         for (int i = 0; i < maxRoomCount; i++) {

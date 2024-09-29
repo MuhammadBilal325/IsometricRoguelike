@@ -50,3 +50,4 @@ public class DungeonRoom : MonoBehaviour {
             renderers[i].enabled = true;
         }
     }
+}

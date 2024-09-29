@@ -26,11 +26,11 @@ public class EnemyHitVisual : MonoBehaviour {
     private void Update() {
         if (flashLerp < 1f) {
             flashLerp += Time.deltaTime * flashSpeed;
-            meshRenderer.material.SetFloat(EMISSION_MIX, flashLerp);
+            meshRenderer.material.SetFloat(EMISSION_MIX, 1f - flashLerp);
         }
         else if (isFlashing) {
             isFlashing = false;
-            meshRenderer.material.SetFloat(EMISSION_MIX, 1f);
+            meshRenderer.material.SetFloat(EMISSION_MIX, 0f);
         }
     }
 }

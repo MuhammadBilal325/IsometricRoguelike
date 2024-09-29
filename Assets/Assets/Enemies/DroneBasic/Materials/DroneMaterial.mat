@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: DroneMaterial
-  m_Shader: {fileID: -6465566751694194690, guid: d48ad6fec15bae1489737124e3370c52,
+  m_Shader: {fileID: -6465566751694194690, guid: 68ddf1e0286fc6b4f9fb2b210974c708,
     type: 3}
   m_Parent: {fileID: 2100000, guid: 099ffdde9af629241a664c9d6ab17a61, type: 2}
   m_ModifiedSerializedProperties: 20
@@ -18,14 +18,21 @@ Material:
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 2000
-  stringTagMap:
-    RenderType: Opaque
+  stringTagMap: {}
   disabledShaderPasses: []
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BaseColor:
+        m_Texture: {fileID: 2800000, guid: 480f5f6a8bf24344ea35dd9bf682f911, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Emission:
+        m_Texture: {fileID: 2800000, guid: 9c7f06620466cde44b4c82a9cc98face, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionTex:
         m_Texture: {fileID: 2800000, guid: 9c7f06620466cde44b4c82a9cc98face, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -37,15 +44,17 @@ Material:
     m_Floats:
     - _Cull: 2
     - _DstBlend: 0
-    - _EmissionMix: 1
+    - _EmissionMix: 0
     - _EmissionMultiply: 20
+    - _EmissionTexBrightness: 16.72
     - _MetallicValue: 0.67
     - _RoughnessValue: 1
     - _Surface: 0
     - _WorkflowMode: 1
     - _ZWrite: 1
     - _ZWriteControl: 0
-    m_Colors: []
+    m_Colors:
+    - _EmissionOverride: {r: 2.6390157, g: 2.6390157, b: 2.6390157, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &9026398574511291748
 MonoBehaviour:

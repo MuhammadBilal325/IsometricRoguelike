@@ -118,7 +118,7 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
     }
     private IEnumerator AttackCoroutine(float delay) {
         yield return new WaitForSeconds(delay);
-        Instantiate(attackComboListSO.attackCombos[0].attacks[0].attackPrefab, attackPoint);
+        Instantiate(attackComboListSO.attackCombos[0].attacks[0].attackPrefab, attackPoint.position, attackPoint.rotation);
         attackCoroutine = null;
     }
 
