@@ -45,8 +45,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     private float attackCooldown;
     private Coroutine attackCoroutine;
     private bool hitPaused = false;
-    private bool hitPauseEnded = false;
-    private Vector3 preHitPauseVelocity;
+    private float originalTimeScale = 1f;
     private Coroutine hitPauseCoroutine = null;
     [SerializeField] private Transform attackSpawnPoint;
     [SerializeField] private AttackComboListSO attackComboListSO;
@@ -239,18 +238,19 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         hitPaused = true;
         HitPauseStart?.Invoke(this, EventArgs.Empty);
         //Store all movement related variables
-        if (hitPauseCoroutine != null) {
-            StopCoroutine(hitPauseCoroutine);
+        originalTimeScale = Time.timeScale;
+        Time.timeScale = 0f;
+        if (hitPauseCoroutine == null) {
+            hitPauseCoroutine = StartCoroutine(HitPauseCoroutine(pauseTime));
         }
-        hitPauseCoroutine = StartCoroutine(HitPauseCoroutine(pauseTime));
     }
 
     IEnumerator HitPauseCoroutine(float pauseTime) {
-        yield return new WaitForSeconds(pauseTime);
+        yield return new WaitForSecondsRealtime(pauseTime);
         hitPaused = false;
+        Time.timeScale = originalTimeScale;
         HitPauseEnd?.Invoke(this, EventArgs.Empty);
         hitPauseCoroutine = null;
-        hitPauseEnded = true;
     }
     #endregion
     // Update is called once per frame
@@ -294,15 +294,15 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
             DashEnd?.Invoke(this, EventArgs.Empty);
             state = State.Normal;
         }
-        //Handle hitPause, do not decrement attack cooldowns if hit paused
-        if (!hitPaused) {
-            if (attackCooldown > 0) {
-                attackCooldown -= Time.deltaTime;
-            }
-            if (attackComboTimer > 0) {
-                attackComboTimer -= Time.deltaTime;
-            }
+
+
+        if (attackCooldown > 0) {
+            attackCooldown -= Time.deltaTime;
         }
+        if (attackComboTimer > 0) {
+            attackComboTimer -= Time.deltaTime;
+        }
+
         if (isBlocking) {
             parryFrameTime += Time.deltaTime;
         }
@@ -310,10 +310,6 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     void ReorientMovementVectorToCamera() {
-        if (hitPaused) {
-            movementVector = Vector3.zero;
-            return;
-        }
         Vector3 inputVector = GameInput.Instance.GetMovementVector();
         movementVector = inputVector.normalized;
         movementVector = new Vector3(movementVector.x, 0, movementVector.y);
@@ -333,9 +329,6 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     void ReorientPlayerRotationToPointer() {
-        if (hitPaused) {
-            return;
-        }
         Vector3 pointer = Input.mousePosition;
         Ray ray = Camera.main.ScreenPointToRay(pointer);
         Plane playerPlane = new(Vector3.up, transform.position);
@@ -398,8 +391,6 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime) {
-        if (hitPauseEnded)
-            currentVelocity = preHitPauseVelocity;
         Vector3 targetMovementVelocity = Vector3.zero;
         if (state == State.Normal) {
             if (Motor.GroundingStatus.IsStableOnGround) {
@@ -443,7 +434,6 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
             }
 
         }
-        preHitPauseVelocity = currentVelocity;
     }
 
 

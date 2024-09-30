@@ -16,8 +16,6 @@ public class PlayerVisual : MonoBehaviour {
     private readonly string BLOCK_BOOL = "Blocking";
     private readonly string ATTACK_INDEX = "Attack_Index";
     private float attackTimer = 0f;
-    private bool isHitPaused;
-    private float originalSpeed;
     Vector3 pointerMovementVector;
     // Start is called before the first frame update
     void Start() {
@@ -26,27 +24,10 @@ public class PlayerVisual : MonoBehaviour {
         player.Attack1Pressed += Player_Attack1Pressed;
         player.Attack2Pressed += Player_Attack2Pressed;
         player.BlockChanged += Player_BlockChanged;
-        player.HitPauseStart += Player_HitPauseStart;
-        player.HitPauseEnd += Player_HitPauseEnd;
     }
-
     private void Player_BlockChanged(object sender, Player.BlockChangedArgs e) {
         animator.SetBool(BLOCK_BOOL, e.isBlocking);
     }
-
-    private void Player_HitPauseEnd(object sender, System.EventArgs e) {
-        isHitPaused = false;
-        animator.speed = originalSpeed;
-    }
-
-    private void Player_HitPauseStart(object sender, System.EventArgs e) {
-        if (!isHitPaused) {
-            isHitPaused = true;
-            originalSpeed = animator.speed;
-            animator.speed = 0;
-        }
-    }
-
     private void Player_Attack1Pressed(object sender, System.EventArgs e) {
         animator.SetBool(ATTACK_BOOL, true);
         attackTimer = maxAttackTimers[0];
@@ -62,8 +43,7 @@ public class PlayerVisual : MonoBehaviour {
 
     // Update is called once per frame
     void Update() {
-        if (!isHitPaused)
-            attackTimer -= Time.deltaTime;
+        attackTimer -= Time.deltaTime;
         if (attackTimer <= 0) {
             animator.SetBool(ATTACK_BOOL, false);
         }
