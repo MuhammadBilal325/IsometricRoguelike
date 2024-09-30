@@ -208,8 +208,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abdb094897cf17b4d8d84e7e3677a0be, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 1000
-  attack1Shake: 0.4
+  maxHealth: 100
+  attack1Shake: 0.3
   attack1Pushback: -10
   attack2Pushback: 10
   attackSpawnPoint: {fileID: 2009364653493306111}
