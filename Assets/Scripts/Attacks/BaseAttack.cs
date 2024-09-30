@@ -6,9 +6,9 @@ public class BaseAttack : MonoBehaviour {
     [SerializeField] protected HittableType hittableTarget;
     [SerializeField] protected AttackSO attackData;
 
-    public virtual void OnHit(IHittable hitObject) {
+    public virtual void OnHitting(IHittable hitObject, Collision collision = null) {
         if (hitObject.GetHittableType() == hittableTarget || hitObject.GetHittableType() == HittableType.Environment) {
-            hitObject.Hit(this);
+            hitObject.Hit(this, collision);
         }
     }
 

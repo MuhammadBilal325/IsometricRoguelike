@@ -14,7 +14,7 @@ public class Obstacle : MonoBehaviour, IHittable {
         return 10000;
     }
 
-    public void Hit(BaseAttack attack) {
+    public void Hit(BaseAttack attack, Collision collision = null) {
         OnHit?.Invoke(this, EventArgs.Empty);
     }
 

@@ -214,6 +214,9 @@ MonoBehaviour:
   attack2Pushback: 10
   attackSpawnPoint: {fileID: 2009364653493306111}
   attackComboListSO: {fileID: 11400000, guid: 3e4bc98cffeb78d4f881f8bf82190eb9, type: 2}
+  damageReduction: 0.5
+  minBlockTime: 0.2
+  parryTime: 0.1
   playerSpeed: 10
   moveSharpness: 20
   dashDistance: 30
@@ -347,7 +350,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ec2ba9e7b2f44a4082007f16ecd4338, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dampTime: 0.1
+  movementDampTime: 0.1
   maxAttackTimers:
   - 0.1
   - 1

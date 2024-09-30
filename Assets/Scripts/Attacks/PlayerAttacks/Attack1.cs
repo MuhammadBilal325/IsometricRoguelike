@@ -12,20 +12,16 @@ public class Attack1 : BaseAttack {
     }
 
     void Update() {
-        transform.Translate(attackSpeed * Time.deltaTime * Vector3.forward);    
+        transform.Translate(attackSpeed * Time.deltaTime * Vector3.forward);
     }
 
-    public override void OnHit(IHittable hitObject) {
-        if (hitObject.GetHittableType() == hittableTarget || hitObject.GetHittableType() == HittableType.Environment) {
-            hitObject.Hit(this);
-            Destroy(this.gameObject);
-        }
-    }
+
 
     private void OnCollisionEnter(Collision collision) {
         if (collision.gameObject.TryGetComponent<IHittable>(out IHittable hitObject)) {
             if (hitObject != null) {
-                OnHit(hitObject);
+                OnHitting(hitObject);
+                Destroy(gameObject);
             }
         }
 

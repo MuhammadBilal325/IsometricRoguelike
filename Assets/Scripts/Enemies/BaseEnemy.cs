@@ -20,7 +20,7 @@ public abstract class BaseEnemy : MonoBehaviour, IHittable {
     protected virtual void InvokeHitEvent() {
         OnHit?.Invoke(this, EventArgs.Empty);
     }
-    public virtual void Hit(BaseAttack attack) {
+    public virtual void Hit(BaseAttack attack, Collision collision = null) {
         Debug.LogError("BaseEnemy " + this.name + " Hit by attack" + attack);
     }
 

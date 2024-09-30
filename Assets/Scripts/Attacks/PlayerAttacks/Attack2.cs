@@ -7,9 +7,9 @@ public class Attack2 : BaseAttack {
     [SerializeField] private float hitPauseTime = 0.1f;
     [SerializeField] private float trauma = 0.3f;
     private bool hitPaused = false;
-    public override void OnHit(IHittable hitObject) {
+    public override void OnHitting(IHittable hitObject, Collision collision = null) {
         if (hitObject.GetHittableType() == hittableTarget || hitObject.GetHittableType() == HittableType.Environment) {
-            hitObject.Hit(this);
+            hitObject.Hit(this, collision);
             if (!hitPaused) {
                 Player.Instance.HitPause(hitPauseTime);
                 CameraController.Instance.AddTrauma(trauma);
@@ -21,7 +21,7 @@ public class Attack2 : BaseAttack {
     private void OnCollisionEnter(Collision collision) {
         if (collision.gameObject.TryGetComponent<IHittable>(out IHittable hitObject)) {
             if (hitObject != null) {
-                OnHit(hitObject);
+                OnHitting(hitObject);
             }
         }
     }

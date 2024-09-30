@@ -11,7 +11,7 @@ public enum HittableType {
 public interface IHittable {
 
     public event EventHandler OnHit;
-    void Hit(BaseAttack attack);
+    void Hit(BaseAttack attack, Collision collision = null);
     public int GetHealth();
 
     public int GetMaxHealth();

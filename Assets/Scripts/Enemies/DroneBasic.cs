@@ -43,7 +43,7 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
         return health;
     }
 
-    public override void Hit(BaseAttack attack) {
+    public override void Hit(BaseAttack attack, Collision collision = null) {
         health -= attack.GetDamage();
         base.InvokeHitEvent();
         if (health <= 0) {

@@ -45,6 +45,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     private float attackCooldown;
     private Coroutine attackCoroutine;
     private bool hitPaused = false;
+    private bool hitPauseEnded = false;
+    private Vector3 preHitPauseVelocity;
     private Coroutine hitPauseCoroutine = null;
     [SerializeField] private Transform attackSpawnPoint;
     [SerializeField] private AttackComboListSO attackComboListSO;
@@ -55,8 +57,12 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     //Blocking
     [Header("Block")]
     [SerializeField] private float damageReduction = 0.5f;
+    [SerializeField] private float minBlockTime = 0.5f;
+    [SerializeField] private float parryTime = 0.25f;
+    private float parryFrameTime = 0;
 
     private bool isBlocking = false;
+    Coroutine blockLiftCoroutine = null;
     //Movement
     [Header("Movement")]
     [SerializeField] private float playerSpeed;
@@ -201,25 +207,38 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
     #endregion
 
+
+    #region Block
     private void GameInput_BlockPressed(object sender, EventArgs e) {
         if (attackCooldown <= 0 && !hitPaused) {
             isBlocking = true;
+            parryFrameTime = 0;
             BlockChanged?.Invoke(this, new BlockChangedArgs { isBlocking = isBlocking });
         }
     }
     private void GameInput_BlockLifted(object sender, EventArgs e) {
         if (isBlocking) {
-            isBlocking = false;
-            BlockChanged?.Invoke(this, new BlockChangedArgs { isBlocking = isBlocking });
+            if (blockLiftCoroutine == null) {
+                StartCoroutine(BlockLiftCoroutine());
+            }
         }
     }
 
+    IEnumerator BlockLiftCoroutine() {
+        yield return new WaitForSeconds(minBlockTime);
+        isBlocking = false;
+        BlockChanged?.Invoke(this, new BlockChangedArgs { isBlocking = isBlocking });
+        blockLiftCoroutine = null;
+    }
+
+    #endregion
 
     #region HitPause
 
     public void HitPause(float pauseTime) {
         hitPaused = true;
         HitPauseStart?.Invoke(this, EventArgs.Empty);
+        //Store all movement related variables
         if (hitPauseCoroutine != null) {
             StopCoroutine(hitPauseCoroutine);
         }
@@ -231,6 +250,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         hitPaused = false;
         HitPauseEnd?.Invoke(this, EventArgs.Empty);
         hitPauseCoroutine = null;
+        hitPauseEnded = true;
     }
     #endregion
     // Update is called once per frame
@@ -275,20 +295,25 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
             state = State.Normal;
         }
         //Handle hitPause, do not decrement attack cooldowns if hit paused
-        if (hitPaused) {
-            movementVector = Vector3.zero;
-            return;
+        if (!hitPaused) {
+            if (attackCooldown > 0) {
+                attackCooldown -= Time.deltaTime;
+            }
+            if (attackComboTimer > 0) {
+                attackComboTimer -= Time.deltaTime;
+            }
         }
-        if (attackCooldown > 0) {
-            attackCooldown -= Time.deltaTime;
-        }
-        if (attackComboTimer > 0) {
-            attackComboTimer -= Time.deltaTime;
+        if (isBlocking) {
+            parryFrameTime += Time.deltaTime;
         }
 
     }
 
     void ReorientMovementVectorToCamera() {
+        if (hitPaused) {
+            movementVector = Vector3.zero;
+            return;
+        }
         Vector3 inputVector = GameInput.Instance.GetMovementVector();
         movementVector = inputVector.normalized;
         movementVector = new Vector3(movementVector.x, 0, movementVector.y);
@@ -308,6 +333,9 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     void ReorientPlayerRotationToPointer() {
+        if (hitPaused) {
+            return;
+        }
         Vector3 pointer = Input.mousePosition;
         Ray ray = Camera.main.ScreenPointToRay(pointer);
         Plane playerPlane = new(Vector3.up, transform.position);
@@ -370,6 +398,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime) {
+        if (hitPauseEnded)
+            currentVelocity = preHitPauseVelocity;
         Vector3 targetMovementVelocity = Vector3.zero;
         if (state == State.Normal) {
             if (Motor.GroundingStatus.IsStableOnGround) {
@@ -413,6 +443,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
             }
 
         }
+        preHitPauseVelocity = currentVelocity;
     }
 
 
@@ -440,16 +471,36 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
 
     #region IHittable
-    public void Hit(BaseAttack attack) {
+    public void Hit(BaseAttack attack, Collision collision = null) {
         if (state == State.Dead) {
             return;
         }
         if (attack.GetTarget() == HittableType.Player) {
             CameraController.Instance.AddTrauma(0.3f);
-            if (isBlocking)
-                health -= (int)(attack.GetDamage() * damageReduction);
-            else
-                health -= attack.GetDamage();
+            float damage = 0;
+            //Determine if attack was in front of player, if collision is null assume attack was from behind
+            bool inFront = false;
+            if (collision != null) {
+                Vector3 attackDirection = collision.GetContact(0).point - transform.position;
+                attackDirection.Normalize();
+                float dotProduct = Vector3.Dot(transform.forward, attackDirection); // 3D
+                if (dotProduct > 0.5f) {
+                    inFront = true;
+                }
+            }
+
+            if (isBlocking && inFront) {
+                if (parryFrameTime <= parryTime) {
+                    damage = 0;
+                }
+                else {
+                    damage = attack.GetDamage() * damageReduction;
+                }
+            }
+            else {
+                damage = attack.GetDamage();
+            }
+            health -= (int)damage;
             OnHit?.Invoke(this, EventArgs.Empty);
             if (health <= 0) {
                 state = State.Dead;
