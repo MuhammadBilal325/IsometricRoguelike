@@ -482,8 +482,10 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
             if (isBlocking && inFront) {
                 if (parryFrameTime <= parryMaxTime) {
+                    //Player successfully parried
                     damage = 0;
                     HitPause(parryHitPauseTime);
+                    EffectController.Instance.SpawnEffect(EffectController.EffectType.Particles, attackSpawnPoint.position);
                 }
                 else {
                     damage = attack.GetDamage() * damageReduction;
