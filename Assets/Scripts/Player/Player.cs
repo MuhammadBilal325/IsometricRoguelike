@@ -57,7 +57,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     [Header("Block")]
     [SerializeField] private float damageReduction = 0.5f;
     [SerializeField] private float minBlockTime = 0.5f;
-    [SerializeField] private float parryTime = 0.25f;
+    [SerializeField] private float parryMaxTime = 0.25f;
+    [SerializeField] private float parryHitPauseTime = 0.1f;
     private float parryFrameTime = 0;
 
     private bool isBlocking = false;
@@ -480,8 +481,9 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
             }
 
             if (isBlocking && inFront) {
-                if (parryFrameTime <= parryTime) {
+                if (parryFrameTime <= parryMaxTime) {
                     damage = 0;
+                    HitPause(parryHitPauseTime);
                 }
                 else {
                     damage = attack.GetDamage() * damageReduction;

@@ -43,6 +43,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Cull: 2
+    - _Darken: 1
     - _DstBlend: 0
     - _EmissionMix: 0
     - _EmissionMultiply: 20

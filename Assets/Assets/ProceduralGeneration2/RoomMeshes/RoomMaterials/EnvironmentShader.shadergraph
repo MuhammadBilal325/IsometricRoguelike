@@ -14,6 +14,12 @@
         },
         {
             "m_Id": "e4eb316673914fd79b3f32fa035d353d"
+        },
+        {
+            "m_Id": "8e97d5e8dccb4607898a6ece80160a43"
+        },
+        {
+            "m_Id": "5d3bd145dbf9481d8a67dc8546c72155"
         }
     ],
     "m_Keywords": [],
@@ -579,7 +585,7 @@
         "scalar product"
     ],
     "m_Precision": 0,
-    "m_PreviewExpanded": true,
+    "m_PreviewExpanded": false,
     "m_DismissedVersion": 0,
     "m_PreviewMode": 0,
     "m_CustomColors": {
@@ -1098,11 +1104,39 @@
         "linear interpolate"
     ],
     "m_Precision": 0,
-    "m_PreviewExpanded": true,
+    "m_PreviewExpanded": false,
     "m_DismissedVersion": 0,
     "m_PreviewMode": 0,
     "m_CustomColors": {
         "m_SerializableColors": []
+    }
+}
+
+{
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "5d3bd145dbf9481d8a67dc8546c72155",
+    "m_Guid": {
+        "m_GuidSerialized": "9212009e-2a87-41df-983d-8962b175ac8c"
+    },
+    "m_Name": "BreakupScale",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "BreakupScale",
+    "m_DefaultReferenceName": "_BreakupScale",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 0.0,
+    "m_FloatType": 0,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
     }
 }
 
@@ -1137,7 +1171,7 @@
     ],
     "synonyms": [],
     "m_Precision": 0,
-    "m_PreviewExpanded": true,
+    "m_PreviewExpanded": false,
     "m_DismissedVersion": 0,
     "m_PreviewMode": 0,
     "m_CustomColors": {
@@ -1802,6 +1836,34 @@
 }
 
 {
+    "m_SGVersion": 1,
+    "m_Type": "UnityEditor.ShaderGraph.Internal.Vector1ShaderProperty",
+    "m_ObjectId": "8e97d5e8dccb4607898a6ece80160a43",
+    "m_Guid": {
+        "m_GuidSerialized": "a7225b29-96d6-47f0-bde6-7b38a72220be"
+    },
+    "m_Name": "Irregularity",
+    "m_DefaultRefNameVersion": 1,
+    "m_RefNameGeneratedByDisplayName": "Irregularity",
+    "m_DefaultReferenceName": "_Irregularity",
+    "m_OverrideReferenceName": "",
+    "m_GeneratePropertyBlock": true,
+    "m_UseCustomSlotLabel": false,
+    "m_CustomSlotLabel": "",
+    "m_DismissedVersion": 0,
+    "m_Precision": 0,
+    "overrideHLSLDeclaration": false,
+    "hlslDeclarationOverride": 0,
+    "m_Hidden": false,
+    "m_Value": 0.0,
+    "m_FloatType": 1,
+    "m_RangeValues": {
+        "x": 0.0,
+        "y": 1.0
+    }
+}
+
+{
     "m_SGVersion": 0,
     "m_Type": "UnityEditor.ShaderGraph.Vector1MaterialSlot",
     "m_ObjectId": "8f21c009e79e4cc280c4b59f66392f51",
@@ -1900,10 +1962,10 @@
         "m_Expanded": true,
         "m_Position": {
             "serializedVersion": "2",
-            "x": -523.0,
-            "y": 407.0000305175781,
-            "width": 208.0,
-            "height": 314.9999694824219
+            "x": -1129.9998779296875,
+            "y": 500.9999694824219,
+            "width": 207.99993896484376,
+            "height": 315.0000305175781
         }
     },
     "m_Slots": [
@@ -2364,6 +2426,12 @@
         },
         {
             "m_Id": "e4eb316673914fd79b3f32fa035d353d"
+        },
+        {
+            "m_Id": "8e97d5e8dccb4607898a6ece80160a43"
+        },
+        {
+            "m_Id": "5d3bd145dbf9481d8a67dc8546c72155"
         }
     ]
 }

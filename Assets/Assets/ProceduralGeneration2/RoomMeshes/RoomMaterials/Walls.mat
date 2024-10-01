@@ -91,6 +91,8 @@ Material:
     - _Blend: 0
     - _BlendModePreserveSpecular: 1
     - _BlendOp: 0
+    - _Breakup: 12.7
+    - _BreakupScale: 3.6
     - _BumpScale: 1
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
@@ -105,6 +107,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _Irregularity: 0.295
     - _Metallic: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.005
