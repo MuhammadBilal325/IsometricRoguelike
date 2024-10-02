@@ -394,7 +394,7 @@ GameObject:
   - component: {fileID: 4434860327693065839}
   - component: {fileID: 8488115048427910430}
   m_Layer: 0
-  m_Name: DroneBasicEnemy
+  m_Name: DroneEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
