@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 062bba0fd81aa904aa34e4357e7bf214, type: 3}
-  m_Name: EnemyList
+  m_Script: {fileID: 11500000, guid: e14e05ef8fadbd047a237ee77321c6a6, type: 3}
+  m_Name: Drone
   m_EditorClassIdentifier: 
-  enemies:
-  - {fileID: 11400000, guid: 6bd8cf36e2f8929408688ddec1b3e0e7, type: 2}
-  - {fileID: 11400000, guid: af3a88a81b03b5a4bb02ee082afa3d81, type: 2}
+  enemyName: Ball Drone
+  enemyPrefab: {fileID: 8584092749779440426, guid: 14e2593331b7f4e40a4bb7bd285551ee,
+    type: 3}

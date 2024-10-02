@@ -12,17 +12,33 @@ public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
         Beeping,
         Dead
     }
-    public event EventHandler<AttackEventArgs> StartAttack;
-    public event EventHandler StartBeeping;
+    public event EventHandler<AttackEventArgs> StartAttacking;
+    public event EventHandler<BeepingEventArgs> StartBeeping;
     public event EventHandler OnDeath;
     public class AttackEventArgs : EventArgs {
         public float attackWarmUpTime;
     }
-    [SerializeField] private float idleRange;
-    [SerializeField] private float attackRange;
+    public class BeepingEventArgs : EventArgs {
+        public float beepingWarmUpTime;
+    }
+    [SerializeField] private float idleRange = 30f;
+    [SerializeField] private float attackRange = 5f;
+    [SerializeField] private float beepingRange = 2f;
+    [SerializeField] private float attackSpeed = 1f;
     //Attacks
     [SerializeField] private float attackWarmUp;
     private float attackTimer = 0f;
+    private Vector3 attackTargetPosition;
+
+    //Physical
+    [SerializeField] private Transform attack1HitBox;
+
+
+    [SerializeField] private AttackComboListSO attackComboListSO;
+
+    //Beeping
+    [SerializeField] private float beepingWarmUp;
+    private float beepingTimer = 0f;
     //Movement
     [SerializeField] private float speed;
     [SerializeField] private float turnSharpness;
@@ -31,8 +47,9 @@ public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
     [SerializeField] private KinematicCharacterMotor Motor;
     [SerializeField] private Vector3 gravityVector;
     private Vector3 movementVector;
-    private Vector3 targetPosition;
     private Vector3 vectorToPlayer;
+    private Vector3 rotationPoint;
+    private Vector3 lastRotationPoint;
     //Forces
     private Vector3 addForce;
 
@@ -46,7 +63,7 @@ public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
         health -= attack.GetDamage();
         base.InvokeHitEvent();
         if (health <= 0) {
-            Destroy(this.gameObject);
+            state = State.Beeping;
         }
     }
     // Start is called before the first frame update
@@ -57,24 +74,35 @@ public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
 
     // Update is called once per frame
     private void Update() {
+        if (!Player.Instance.IsAlive())
+            return;
+        vectorToPlayer = Player.Instance.transform.position - transform.position;
+        vectorToPlayer.y = 0f;
+        vectorToPlayer.Normalize();
+        rotationPoint = Player.Instance.transform.position;
         switch (state) {
             case State.Idle:
+                Idle();
                 break;
             case State.Follow:
+                Follow();
                 break;
             case State.Attacking:
+                Attacking();
                 break;
             case State.Beeping:
+                Beeping();
                 break;
             case State.Dead:
                 break;
             default:
                 break;
         }
+        lastRotationPoint = rotationPoint;
     }
 
     private void Idle() {
-        if (Vector3.SqrMagnitude(transform.position - Player.Instance.transform.position) < idleRange * idleRange && Player.Instance.IsAlive()) {
+        if (Vector3.SqrMagnitude(transform.position - Player.Instance.transform.position) <= idleRange * idleRange && Player.Instance.IsAlive()) {
             state = State.Follow;
             return;
         }
@@ -82,10 +110,77 @@ public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
 
     }
 
-    private void Attack() {
-     }
+    private void Follow() {
 
- 
+        //Get a movementVector pointing to player and move
+        movementVector = vectorToPlayer;
+        float distanceFromPlayer = Vector3.SqrMagnitude(Player.Instance.transform.position - transform.position);
+        //
+        if (distanceFromPlayer <= beepingRange * beepingRange) {
+            state = State.Beeping;
+            StartBeeping?.Invoke(this, new BeepingEventArgs { beepingWarmUpTime = beepingWarmUp });
+            beepingTimer = 0f;
+            movementVector = Vector3.zero;
+
+        }
+        else if (distanceFromPlayer <= attackRange * attackRange) {
+            state = State.Attacking;
+            StartAttacking?.Invoke(this, new AttackEventArgs { attackWarmUpTime = attackWarmUp });
+            attackTargetPosition = Player.Instance.transform.position;
+            attackTimer = 0f;
+            movementVector = Vector3.zero;
+        }
+
+
+    }
+
+    private void Attacking() {
+        rotationPoint = attackTargetPosition;
+        if (attackTimer < attackWarmUp) {
+            attackTimer += Time.deltaTime;
+            if (attackTimer >= attackWarmUp) {
+                StartAttack();
+            }
+        }
+        else if (attackTimer >= attackWarmUp && attackTimer <= attackWarmUp * 2) {
+            attackTimer += Time.deltaTime;
+        }
+        else {
+            state = State.Idle;
+            EndAttack();
+        }
+    }
+
+    private void StartAttack() {
+        //Jump towards player
+        Vector3 jumpVector = attackTargetPosition - transform.position;
+        jumpVector.y = 0;
+        AddVelocity(jumpVector * attackSpeed);
+        //Enable hitbox
+        attack1HitBox.gameObject.SetActive(true);
+
+    }
+
+    private void EndAttack() {
+        attack1HitBox.gameObject.SetActive(false);
+    }
+
+    private void Beeping() {
+        rotationPoint = lastRotationPoint;
+        if (beepingTimer < beepingWarmUp) {
+            beepingTimer += Time.deltaTime;
+        }
+        else {
+            Explode();
+            state = State.Dead;
+        }
+    }
+
+
+    private void Explode() {
+        Destroy(gameObject);
+    }
+
     #region KinematicCharacterController
     public void AfterCharacterUpdate(float deltaTime) {
     }
@@ -118,8 +213,10 @@ public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
         addForce += vel;
     }
     public void UpdateRotation(ref Quaternion currentRotation, float deltaTime) {
-        if (vectorToPlayer.sqrMagnitude > 0f)
-            currentRotation = Quaternion.Lerp(currentRotation, Quaternion.LookRotation(vectorToPlayer), deltaTime * rotationSpeed);
+
+        Vector3 vectorToTarget = rotationPoint - transform.position;
+        if (vectorToTarget.sqrMagnitude > 0f)
+            currentRotation = Quaternion.Lerp(currentRotation, Quaternion.LookRotation(vectorToTarget), deltaTime * rotationSpeed);
     }
 
     public void UpdateVelocity(ref Vector3 currentVelocity, float deltaTime) {
@@ -157,4 +254,7 @@ public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
         }
     }
     #endregion
+
+
+
 }

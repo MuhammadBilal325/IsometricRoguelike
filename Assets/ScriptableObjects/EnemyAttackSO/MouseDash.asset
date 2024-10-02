@@ -10,15 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 566695f5d28c66b4a8e23bb6e94d6336, type: 3}
-  m_Name: Attack2-2
+  m_Name: MouseDash
   m_EditorClassIdentifier: 
-  attackPrefab: {fileID: 3056563653489977596, guid: cb770d9992daef84996914b18f16fcdc,
-    type: 3}
-  attackSpawnVFX: {fileID: 8123056004155896125, guid: ef0d9f873a1b1e44490c4fd3d83e0cfb,
-    type: 3}
-  attackSprite: {fileID: 0}
-  attackName: SwordSlash-2
-  attackDuration: 0.3
-  attackCooldown: 0.3
-  attackDelay: 0.05
-  attackDamage: 15
+  attackPrefab: {fileID: 0}
+  attackSpawnVFX: {fileID: 0}
+  attackName: MouseDash
+  attackDuration: 0
+  attackCooldown: 0
+  attackDelay: 0
+  attackDamage: 5

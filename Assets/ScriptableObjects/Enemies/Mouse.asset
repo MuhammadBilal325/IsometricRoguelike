@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e14e05ef8fadbd047a237ee77321c6a6, type: 3}
-  m_Name: Ball
+  m_Name: Mouse
   m_EditorClassIdentifier: 
-  enemyName: Ball Drone
-  enemyPrefab: {fileID: 8584092749779440426, guid: 14e2593331b7f4e40a4bb7bd285551ee,
+  enemyName: Mouse
+  enemyPrefab: {fileID: 6558155625042687613, guid: df28fa607d3ed7546b7ee10172212382,
     type: 3}

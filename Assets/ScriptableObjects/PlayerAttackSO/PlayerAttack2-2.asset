@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 566695f5d28c66b4a8e23bb6e94d6336, type: 3}
-  m_Name: Attack1
+  m_Name: PlayerAttack2-2
   m_EditorClassIdentifier: 
-  attackPrefab: {fileID: 1065485053486995293, guid: a7cf77c3e2ef7de458e14944add81809,
+  attackPrefab: {fileID: 3056563653489977596, guid: cb770d9992daef84996914b18f16fcdc,
     type: 3}
-  attackSpawnVFX: {fileID: 642391246648651205, guid: b55bc88a3fdc9c1419041cbeb7225d0a,
+  attackSpawnVFX: {fileID: 8123056004155896125, guid: ef0d9f873a1b1e44490c4fd3d83e0cfb,
     type: 3}
-  attackName: X-Projectile
-  attackDuration: 3
-  attackCooldown: 0.5
-  attackDelay: 0.1
-  attackDamage: 10
+  attackSprite: {fileID: 0}
+  attackName: SwordSlash-2
+  attackDuration: 0.3
+  attackCooldown: 0.3
+  attackDelay: 0.05
+  attackDamage: 15
