@@ -116,6 +116,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _MaxPower: 50
     - _Metallic: 0
     - _NoiseBlend: 0.092
     - _OcclusionStrength: 1

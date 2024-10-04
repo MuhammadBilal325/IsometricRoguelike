@@ -75,10 +75,12 @@ public class MouseEnemy : BaseEnemy, KinematicCharacterController.ICharacterCont
     private void Update() {
         if (!Player.Instance.IsAlive())
             return;
-        vectorToPlayer = Player.Instance.transform.position - transform.position;
-        vectorToPlayer.y = 0f;
-        vectorToPlayer.Normalize();
-        rotationPoint = Player.Instance.transform.position;
+        if (state != State.Dead) {
+            vectorToPlayer = Player.Instance.transform.position - transform.position;
+            vectorToPlayer.y = 0f;
+            vectorToPlayer.Normalize();
+            rotationPoint = Player.Instance.transform.position;
+        }
         switch (state) {
             case State.Idle:
                 Idle();
@@ -93,7 +95,6 @@ public class MouseEnemy : BaseEnemy, KinematicCharacterController.ICharacterCont
                 Beeping();
                 break;
             case State.Dead:
-                rotationPoint = lastRotationPoint;
                 break;
             default:
                 break;
