@@ -21,6 +21,7 @@ public class MouseEnemy : BaseEnemy, KinematicCharacterController.ICharacterCont
     public class BeepingEventArgs : EventArgs {
         public float beepingWarmUpTime;
     }
+    [SerializeField] private float deactivationRange = 50f;
     [SerializeField] private float idleRange = 30f;
     [SerializeField] private float attackRange = 5f;
     [SerializeField] private float beepingRange = 2f;
@@ -48,6 +49,7 @@ public class MouseEnemy : BaseEnemy, KinematicCharacterController.ICharacterCont
     private Vector3 vectorToPlayer;
     private Vector3 rotationPoint;
     private Vector3 lastRotationPoint;
+    private bool MotorStatus = true;
     //Forces
     private Vector3 addForce;
 
@@ -73,14 +75,32 @@ public class MouseEnemy : BaseEnemy, KinematicCharacterController.ICharacterCont
 
     // Update is called once per frame
     private void Update() {
+        //Dont run any code if player is dead
         if (!Player.Instance.IsAlive())
             return;
+        //If this enemy is dead then dont update vectors anymore
         if (state != State.Dead) {
-            vectorToPlayer = Player.Instance.transform.position - transform.position;
-            vectorToPlayer.y = 0f;
-            vectorToPlayer.Normalize();
-            rotationPoint = Player.Instance.transform.position;
+            //If the enemy is alive and the player is a certain distance away then disable the kinematic character motor
+            //Reenable it once player gets into view
+            if (Vector3.SqrMagnitude(Player.Instance.transform.position - transform.position) >= deactivationRange * deactivationRange) {
+                if (MotorStatus == true) {
+                    Motor.enabled = false;
+                    MotorStatus = false;
+                }
+            }
+            else {
+                if (MotorStatus == false) {
+                    Motor.enabled = true;
+                    MotorStatus = true;
+                }
+                vectorToPlayer = Player.Instance.transform.position - transform.position;
+                vectorToPlayer.y = 0f;
+                vectorToPlayer.Normalize();
+                rotationPoint = Player.Instance.transform.position;
+            }
         }
+
+
         switch (state) {
             case State.Idle:
                 Idle();
@@ -174,18 +194,18 @@ public class MouseEnemy : BaseEnemy, KinematicCharacterController.ICharacterCont
         else {
             Explode();
             state = State.Dead;
+            Motor.enabled = false;
         }
     }
 
 
     private void Explode() {
         Instantiate(beepingExplosion.attackPrefab, transform);
-        StartCoroutine(DestroyObj(beepingExplosion.attackDuration));
+        StartCoroutine(DeathCouroutine(beepingExplosion.attackDuration));
     }
 
-    IEnumerator DestroyObj(float duration) {
+    IEnumerator DeathCouroutine(float duration) {
         yield return new WaitForSeconds(duration);
-        Destroy(gameObject);
         state = State.Dead;
         OnDeath?.Invoke(this, EventArgs.Empty);
     }

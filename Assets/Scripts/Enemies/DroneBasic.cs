@@ -14,6 +14,7 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
     public class AttackEventArgs : EventArgs {
         public float attackWarmUpTime;
     }
+    [SerializeField] private float deactivationRange = 50f;
     [SerializeField] private float idleRange;
     [SerializeField] private float deaggroRange;
     [SerializeField] private float attackRange;
@@ -36,7 +37,7 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
     private Vector3 vectorToPlayer;
     //Forces
     private Vector3 addForce;
-
+    private bool MotorStatus = true;
     private State state;
 
     public override int GetHealth() {
@@ -58,6 +59,18 @@ public class DroneBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
 
     // Update is called once per frame
     private void Update() {
+        if (Vector3.SqrMagnitude(Player.Instance.transform.position - transform.position) >= deactivationRange * deactivationRange) {
+            if (MotorStatus == true) {
+                Motor.enabled = false;
+                MotorStatus = false;
+            }
+        }
+        else {
+            if (MotorStatus == false) {
+                Motor.enabled = true;
+                MotorStatus = true;
+            }
+        }
         switch (state) {
             case State.Idle:
                 Idle();
