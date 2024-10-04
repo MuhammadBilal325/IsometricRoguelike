@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterController {
+public class MouseEnemy : BaseEnemy, KinematicCharacterController.ICharacterController {
     private enum State {
         Idle,
         Follow,
@@ -26,18 +26,16 @@ public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
     [SerializeField] private float beepingRange = 2f;
     [SerializeField] private float attackSpeed = 1f;
     //Attacks
-    [SerializeField] private float attackWarmUp;
-    private float attackTimer = 0f;
-    private Vector3 attackTargetPosition;
 
-    //Physical
+    //Physical Jump Attack
+    [SerializeField] private float mouseDashWarmUp;
+    private float mouseDashTimer = 0f;
+    private Vector3 mouseDashTargetPosition;
     [SerializeField] private Transform attack1HitBox;
-
-
-    [SerializeField] private AttackComboListSO attackComboListSO;
 
     //Beeping
     [SerializeField] private float beepingWarmUp;
+    [SerializeField] private AttackSO beepingExplosion;
     private float beepingTimer = 0f;
     //Movement
     [SerializeField] private float speed;
@@ -64,6 +62,7 @@ public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
         base.InvokeHitEvent();
         if (health <= 0) {
             state = State.Beeping;
+            StartBeeping?.Invoke(this, new BeepingEventArgs { beepingWarmUpTime = beepingWarmUp });
         }
     }
     // Start is called before the first frame update
@@ -94,6 +93,7 @@ public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
                 Beeping();
                 break;
             case State.Dead:
+                rotationPoint = lastRotationPoint;
                 break;
             default:
                 break;
@@ -125,9 +125,9 @@ public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
         }
         else if (distanceFromPlayer <= attackRange * attackRange) {
             state = State.Attacking;
-            StartAttacking?.Invoke(this, new AttackEventArgs { attackWarmUpTime = attackWarmUp });
-            attackTargetPosition = Player.Instance.transform.position;
-            attackTimer = 0f;
+            StartAttacking?.Invoke(this, new AttackEventArgs { attackWarmUpTime = mouseDashWarmUp });
+            mouseDashTargetPosition = Player.Instance.transform.position;
+            mouseDashTimer = 0f;
             movementVector = Vector3.zero;
         }
 
@@ -135,15 +135,15 @@ public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
     }
 
     private void Attacking() {
-        rotationPoint = attackTargetPosition;
-        if (attackTimer < attackWarmUp) {
-            attackTimer += Time.deltaTime;
-            if (attackTimer >= attackWarmUp) {
+        rotationPoint = mouseDashTargetPosition;
+        if (mouseDashTimer < mouseDashWarmUp) {
+            mouseDashTimer += Time.deltaTime;
+            if (mouseDashTimer >= mouseDashWarmUp) {
                 StartAttack();
             }
         }
-        else if (attackTimer >= attackWarmUp && attackTimer <= attackWarmUp * 2) {
-            attackTimer += Time.deltaTime;
+        else if (mouseDashTimer >= mouseDashWarmUp && mouseDashTimer <= mouseDashWarmUp * 2) {
+            mouseDashTimer += Time.deltaTime;
         }
         else {
             state = State.Idle;
@@ -153,7 +153,7 @@ public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
 
     private void StartAttack() {
         //Jump towards player
-        Vector3 jumpVector = attackTargetPosition - transform.position;
+        Vector3 jumpVector = mouseDashTargetPosition - transform.position;
         jumpVector.y = 0;
         AddVelocity(jumpVector * attackSpeed);
         //Enable hitbox
@@ -178,7 +178,15 @@ public class MouseBasic : BaseEnemy, KinematicCharacterController.ICharacterCont
 
 
     private void Explode() {
+        Instantiate(beepingExplosion.attackPrefab, transform);
+        StartCoroutine(DestroyObj(beepingExplosion.attackDuration));
+    }
+
+    IEnumerator DestroyObj(float duration) {
+        yield return new WaitForSeconds(duration);
         Destroy(gameObject);
+        state = State.Dead;
+        OnDeath?.Invoke(this, EventArgs.Empty);
     }
 
     #region KinematicCharacterController

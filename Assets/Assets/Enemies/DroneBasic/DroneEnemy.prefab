@@ -623,6 +623,8 @@ MonoBehaviour:
   baseEnemy: {fileID: 8488115048427910430}
   flashSpeed: 3
   flashColor: {r: 8, g: 8, b: 8, a: 0}
+  meshRenderer: {fileID: 4646404105803516875}
+  skinnedMeshRenderer: {fileID: 0}
 --- !u!114 &112104463286895896
 MonoBehaviour:
   m_ObjectHideFlags: 0

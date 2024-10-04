@@ -560,15 +560,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c365353956489774e8dfb9c6a57b0c00, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 50
+  maxHealth: 1
   idleRange: 40
   attackRange: 10
   beepingRange: 2
   attackSpeed: 10
-  attackWarmUp: 1
+  mouseDashWarmUp: 1
   attack1HitBox: {fileID: 3406502916957298076}
-  attackComboListSO: {fileID: 0}
   beepingWarmUp: 2
+  beepingExplosion: {fileID: 11400000, guid: e99c343254896844bb5281e486e935fa, type: 2}
   speed: 20
   turnSharpness: 10
   rotationSpeed: 20
@@ -646,11 +646,63 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6a8c8619ed016174daac825c5d2eea03,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1445862723167632938}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6a8c8619ed016174daac825c5d2eea03,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8850303639076883054}
   m_SourcePrefab: {fileID: 100100000, guid: 6a8c8619ed016174daac825c5d2eea03, type: 3}
+--- !u!137 &6002558612071342480 stripped
+SkinnedMeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2313877837151514810, guid: 6a8c8619ed016174daac825c5d2eea03,
+    type: 3}
+  m_PrefabInstance: {fileID: 8309656859416580394}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8420444455287699137 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6a8c8619ed016174daac825c5d2eea03,
     type: 3}
   m_PrefabInstance: {fileID: 8309656859416580394}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &9192054866118503547 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 6a8c8619ed016174daac825c5d2eea03,
+    type: 3}
+  m_PrefabInstance: {fileID: 8309656859416580394}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1445862723167632938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9192054866118503547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b645d7affc4466540963c31ecf244ce9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  baseEnemy: {fileID: 8101609722224551946}
+  flashSpeed: 2
+  flashColor: {r: 4, g: 4, b: 4, a: 0}
+  meshRenderer: {fileID: 0}
+  skinnedMeshRenderer: {fileID: 6002558612071342480}
+--- !u!114 &8850303639076883054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9192054866118503547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c1d128063cd8b794fad2446df070b6a4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouseRenderer: {fileID: 6002558612071342480}
+  mouseScript: {fileID: 8101609722224551946}
+  blinkingFrequency: 10

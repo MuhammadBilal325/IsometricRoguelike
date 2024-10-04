@@ -6,15 +6,20 @@ public class EnemyHitVisual : MonoBehaviour {
     [SerializeField] private BaseEnemy baseEnemy;
     [SerializeField] private float flashSpeed;
     [SerializeField, ColorUsage(hdr: true, showAlpha: true)] private Color flashColor;
-    private MeshRenderer meshRenderer;
+    [SerializeField] private MeshRenderer meshRenderer;
+    [SerializeField] private SkinnedMeshRenderer skinnedMeshRenderer;
     private readonly string EMISSION_OVERRIDE = "_EmissionOverride";
     private readonly string EMISSION_MIX = "_EmissionMix";
     private float flashLerp = 1f;
     private bool isFlashing = false;
     // Start is called before the first frame update
     void Start() {
-        meshRenderer = GetComponent<MeshRenderer>();
-        meshRenderer.material.SetColor(EMISSION_OVERRIDE, flashColor);
+        if (meshRenderer != null) {
+            meshRenderer.material.SetColor(EMISSION_OVERRIDE, flashColor);
+        }
+        if (skinnedMeshRenderer != null) {
+            skinnedMeshRenderer.material.SetColor(EMISSION_OVERRIDE, flashColor);
+        }
         baseEnemy.OnHit += BaseEnemy_OnHit;
     }
 
@@ -26,11 +31,21 @@ public class EnemyHitVisual : MonoBehaviour {
     private void Update() {
         if (flashLerp < 1f) {
             flashLerp += Time.deltaTime * flashSpeed;
-            meshRenderer.material.SetFloat(EMISSION_MIX, 1f - flashLerp);
+            if (meshRenderer != null) {
+                meshRenderer.material.SetFloat(EMISSION_MIX, 1f - flashLerp);
+            }
+            if (skinnedMeshRenderer != null) {
+                skinnedMeshRenderer.material.SetFloat(EMISSION_MIX, 1f - flashLerp);
+            }
         }
         else if (isFlashing) {
             isFlashing = false;
-            meshRenderer.material.SetFloat(EMISSION_MIX, 0f);
+            if (meshRenderer != null) {
+                meshRenderer.material.SetFloat(EMISSION_MIX, 0);
+            }
+            if (skinnedMeshRenderer != null) {
+                skinnedMeshRenderer.material.SetFloat(EMISSION_MIX, 0);
+            }
         }
     }
 }
