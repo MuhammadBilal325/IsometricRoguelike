@@ -561,6 +561,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 1
+  deactivationRange: 50
   idleRange: 40
   attackRange: 10
   beepingRange: 2
@@ -643,6 +644,11 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 310872f79b02b2d43b1f0c75f79c2f4c, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 6a8c8619ed016174daac825c5d2eea03,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: c58cb96911dac964e85892a4b312a472, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -656,6 +662,12 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 8850303639076883054}
   m_SourcePrefab: {fileID: 100100000, guid: 6a8c8619ed016174daac825c5d2eea03, type: 3}
+--- !u!95 &2466637010843561147 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 6a8c8619ed016174daac825c5d2eea03,
+    type: 3}
+  m_PrefabInstance: {fileID: 8309656859416580394}
+  m_PrefabAsset: {fileID: 0}
 --- !u!137 &6002558612071342480 stripped
 SkinnedMeshRenderer:
   m_CorrespondingSourceObject: {fileID: 2313877837151514810, guid: 6a8c8619ed016174daac825c5d2eea03,
@@ -704,5 +716,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mouseRenderer: {fileID: 6002558612071342480}
+  mouseAnimator: {fileID: 2466637010843561147}
   mouseScript: {fileID: 8101609722224551946}
   blinkingFrequency: 10

@@ -60,6 +60,7 @@ public class MouseEnemy : BaseEnemy, KinematicCharacterController.ICharacterCont
     }
 
     public override void Hit(BaseAttack attack, Collision collision = null) {
+        if (health <= 0) return;
         health -= attack.GetDamage();
         base.InvokeHitEvent();
         if (health <= 0) {
