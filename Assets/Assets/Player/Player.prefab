@@ -216,7 +216,8 @@ MonoBehaviour:
   attackComboListSO: {fileID: 11400000, guid: 3e4bc98cffeb78d4f881f8bf82190eb9, type: 2}
   damageReduction: 0.5
   minBlockTime: 0.2
-  parryTime: 0.1
+  parryMaxTime: 0.25
+  parryHitPauseTime: 0.1
   playerSpeed: 10
   moveSharpness: 20
   dashDistance: 30
@@ -225,6 +226,7 @@ MonoBehaviour:
   drag: 0.1
   gravityVector: {x: 0, y: -30, z: 0}
   Motor: {fileID: 6642970081449854584}
+  rotationLerpSpeed: 20
 --- !u!1001 &4000546185741570438
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -79,8 +79,11 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     private float playerToPointerAngle = 0f;
     private Vector3 addVelocity;
     //Rotation
+    [SerializeField]private float rotationLerpSpeed = 10f;
     private Vector3 pointerPositionOnPlayerPlane;
     private Quaternion playerRotation;
+    private Quaternion lastPlayerRotation;
+    private bool stopRotationForThisFrame = false;
 
 
     private void Awake() {
@@ -299,6 +302,8 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
 
         if (attackCooldown > 0) {
             attackCooldown -= Time.deltaTime;
+            stopRotationForThisFrame = true;
+
         }
         if (attackComboTimer > 0) {
             attackComboTimer -= Time.deltaTime;
@@ -330,6 +335,11 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
     }
 
     void ReorientPlayerRotationToPointer() {
+        if (stopRotationForThisFrame) {
+            stopRotationForThisFrame = false;
+            playerRotation = lastPlayerRotation;
+            return;
+        }
         Vector3 pointer = Input.mousePosition;
         Ray ray = Camera.main.ScreenPointToRay(pointer);
         Plane playerPlane = new(Vector3.up, transform.position);
@@ -337,6 +347,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
             pointerPositionOnPlayerPlane = ray.GetPoint(enter);
         }
         Vector3 pointerPositionRelativeToPlayer = pointerPositionOnPlayerPlane - transform.position;
+        lastPlayerRotation = playerRotation;
         playerRotation = Quaternion.LookRotation(pointerPositionRelativeToPlayer);
     }
 
@@ -386,7 +397,7 @@ public class Player : MonoBehaviour, KinematicCharacterController.ICharacterCont
         addVelocity += vel;
     }
     public void UpdateRotation(ref Quaternion currentRotation, float deltaTime) {
-        currentRotation = playerRotation;
+        currentRotation = Quaternion.Lerp(currentRotation,playerRotation,deltaTime*rotationLerpSpeed);
         currentRotation.x = 0;
         currentRotation.z = 0;
     }
